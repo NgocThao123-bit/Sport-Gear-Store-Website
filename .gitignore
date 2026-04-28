@@ -1,0 +1,46 @@
+# ============================================================
+# .gitignore for SportGearStoreDemo
+# Tells git which files to NOT track (build output, secrets, IDE files)
+# Cho git biết file nào KHÔNG cần theo dõi (kết quả build, secrets, file IDE)
+# ============================================================
+
+# .NET build output — generated, never commit these
+# Kết quả build .NET — tự động tạo ra, không commit
+bin/
+obj/
+
+# .NET user secrets and local config — contains passwords/keys
+# Secrets và config local — chứa mật khẩu/khóa
+appsettings.Development.json
+appsettings.Local.json
+*.user
+secrets.json
+
+# Entity Framework migrations snapshot (keep .cs migration files, skip designer)
+# Giữ file .cs migration, bỏ qua file designer
+**/Migrations/*Designer.cs
+
+# Visual Studio / VS Code / Rider IDE files
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Node.js / React (frontend — will add when we create it)
+node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# NuGet
+*.nupkg
+.nuget/
+
+# Logs
+*.log
+logs/
