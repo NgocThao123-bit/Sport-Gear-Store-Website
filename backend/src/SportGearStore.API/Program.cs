@@ -13,6 +13,7 @@
 // ============================================================
 
 using Serilog;
+using SportGearStore.API.Middleware;
 using SportGearStore.Application;
 using SportGearStore.Infrastructure;
 
@@ -62,6 +63,10 @@ try
         app.MapOpenApi();
 
     app.UseSerilogRequestLogging(); // Log every HTTP request automatically
+
+    // ExceptionMiddleware must be FIRST so it catches all errors from every layer below
+    // ExceptionMiddleware phải là ĐẦU TIÊN để bắt tất cả lỗi từ mọi layer phía dưới
+    app.UseMiddleware<ExceptionMiddleware>();
 
     app.UseHttpsRedirection();
     app.UseCors("AllowFrontend");
