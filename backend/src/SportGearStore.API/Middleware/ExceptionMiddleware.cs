@@ -74,11 +74,10 @@ public class ExceptionMiddleware
                 new List<string> { forbiddenEx.Message }
             ),
 
-            // Any unexpected exception — don't leak internal details to client
-            // Mọi exception không mong đợi — không lộ chi tiết nội bộ ra client
+            // Any unexpected exception — expose message in dev for debugging
             _ => (
                 HttpStatusCode.InternalServerError,
-                new List<string> { "An unexpected error occurred. Please try again." }
+                new List<string> { exception.Message, exception.InnerException?.Message ?? "" }
             )
         };
 

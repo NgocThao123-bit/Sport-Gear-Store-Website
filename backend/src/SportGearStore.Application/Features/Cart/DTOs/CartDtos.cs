@@ -5,20 +5,22 @@
 
 namespace SportGearStore.Application.Features.Cart.DTOs;
 
-public record CartDto(
-    Guid Id,
-    List<CartItemDto> Items,
-    decimal TotalAmount,
-    int TotalItems
-);
+public record CartDto
+{
+    public Guid              Id          { get; init; }
+    public List<CartItemDto> Items       { get; init; } = new();
+    public decimal           TotalAmount { get; init; }
+    public int               TotalItems  { get; init; }
+}
 
-public record CartItemDto(
-    Guid Id,
-    Guid ProductId,
-    string ProductName,
-    string? ProductImageUrl,
-    string? VariantInfo,     // e.g. "Size: 42 | Color: Black"
-    int Quantity,
-    decimal UnitPrice,
-    decimal TotalPrice
-);
+public record CartItemDto
+{
+    public Guid    Id              { get; init; }
+    public Guid    ProductId       { get; init; }
+    public string  ProductName     { get; init; } = string.Empty;
+    public string? ProductImageUrl { get; init; }
+    public string? VariantInfo     { get; init; }  // e.g. "Size: 42 | Color: Black"
+    public int     Quantity        { get; init; }
+    public decimal UnitPrice       { get; init; }
+    public decimal TotalPrice      { get; init; }
+}

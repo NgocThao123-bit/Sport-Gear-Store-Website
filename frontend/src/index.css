@@ -1,0 +1,46 @@
+/* ── Google Fonts ─────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=Caveat:wght@700&display=swap');
+
+/* ── Tailwind layers ──────────────────────────────────────── */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base reset ───────────────────────────────────────────── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #F8F8F4;
+  color: #0A0A0A;
+  font-family: 'Space Grotesk', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Custom scrollbar ─────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #F0F0EA; }
+::-webkit-scrollbar-thumb { background: #9B5CF6; border-radius: 3px; }
+
+/* ── Reusable CSS vars ────────────────────────────────────── */
+:root {
+  --lime:   #C8FF00;
+  --purple: #9B5CF6;
+  --blue:   #38BCFF;
+  --black:  #0A0A0A;
+  --cream:  #F8F8F4;
+}
+
+/* ── Floating ball animation ──────────────────────────────── */
+/* Each FloatingBall component sets --dur, --delay, --rotate   */
+/* as inline CSS variables. This single keyframe drives all    */
+/* ball instances with different timings via those variables.  */
+/*                                                             */
+/* Mỗi FloatingBall đặt --dur, --delay, --rotate              */
+/* như biến CSS inline. Keyframe này điều khiển tất cả         */
+/* các instance bóng với thời gian khác nhau qua các biến đó. */
+@keyframes floatBall {
+  0%   { transform: translateY(0px)   rotate(0deg); }
+  50%  { transform: translateY(-22px) rotate(calc(var(--rotate, 15deg) * 0.5)); }
+  100% { transform: translateY(-8px)  rotate(var(--rotate, 15deg)); }
+}

@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SportGear Store — Gear Up. Stand Out.</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Matter.js — physics engine for the Ballpit background -->
+  <!-- Matter.js — thư viện vật lý cho hiệu ứng Ballpit nền -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=Caveat:wght@700&display=swap" rel="stylesheet" />
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #F8F8F4; color: #0A0A0A; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
+
+    :root {
+      --lime:   #C8FF00;
+      --purple: #9B5CF6;
+      --blue:   #38BCFF;
+      --black:  #0A0A0A;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #F0F0EA; }
+    ::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 3px; }
+
+    .font-display { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.02em; }
+    .font-sketch  { font-family: 'Caveat', cursive; }
+
+    .highlight-lime { background: var(--lime); color: var(--black); padding: 0 10px; display: inline-block; }
+
+    /* Pill buttons */
+    .pill {
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 2px solid var(--black); border-radius: 9999px;
+      font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+      transition: background 0.18s, color 0.18s, transform 0.18s;
+      cursor: pointer; text-decoration: none; color: var(--black);
+    }
+    .pill:hover { background: var(--black); color: #fff !important; transform: scale(1.04); }
+    .pill-filled { background: var(--black) !important; color: #fff !important; }
+    .pill-filled:hover { background: var(--purple) !important; border-color: var(--purple) !important; }
+    .pill-lime { background: var(--lime) !important; border-color: var(--lime) !important; color: var(--black) !important; }
+    .pill-lime:hover { background: var(--black) !important; border-color: var(--black) !important; color: #fff !important; }
+
+    /* Hover lift */
+    .lift { transition: transform 0.22s ease, box-shadow 0.22s ease; }
+    .lift:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
+
+    /* Marquee */
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .marquee-inner { animation: marquee 16s linear infinite; display: flex; width: max-content; }
+    .marquee-wrap  { overflow: hidden; }
+
+    /* Category card */
+    .cat-card {
+      border-radius: 24px; overflow: hidden;
+      border: 2px solid var(--black);
+      transition: transform 0.22s, box-shadow 0.22s;
+      text-decoration: none; color: inherit; display: block;
+    }
+    .cat-card:hover { transform: translateY(-6px) rotate(-1deg); box-shadow: 6px 8px 0 var(--black); }
+
+    /* Section label */
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.15em; color: #888;
+    }
+    .section-label::before { content: ''; display: block; width: 20px; height: 2px; background: #888; }
+
+    /* Lime doodle underline */
+    .doodle-under { position: relative; display: inline-block; }
+    .doodle-under::after {
+      content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+      height: 4px; background: var(--lime); border-radius: 2px; transform: skewX(-8deg);
+    }
+
+    /* Stats chip */
+    .stat-chip {
+      border: 1.5px solid rgba(0,0,0,0.12); border-radius: 12px;
+      padding: 10px 18px; background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(8px);
+    }
+
+    /* Product badge */
+    .badge {
+      display: inline-block; font-size: 10px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      border-radius: 9999px; padding: 2px 10px;
+    }
+    .badge-hot  { background: #FF3D3D; color: #fff; }
+    .badge-new  { background: var(--blue); color: #fff; }
+    .badge-sale { background: var(--lime); color: var(--black); }
+
+    /* Wishlist button */
+    .wish-btn {
+      position: absolute; top: 12px; right: 12px;
+      background: #fff; border: 1.5px solid var(--black);
+      border-radius: 9999px; width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; cursor: pointer; transition: transform 0.18s;
+    }
+    .wish-btn:hover { transform: scale(1.2); }
+
+    /* ── BALLPIT HERO ── */
+    #hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 92vh;
+      background: #F8F8F4;
+    }
+    /* Canvas sits behind everything */
+    #ballpitCanvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+    }
+    /* Gradient fade so left-side text is readable */
+    #hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        rgba(248,248,244,0.96) 0%,
+        rgba(248,248,244,0.90) 35%,
+        rgba(248,248,244,0.55) 58%,
+        rgba(248,248,244,0.0)  78%
+      );
+      z-index: 1;
+      pointer-events: none;
+    }
+    /* Content sits on top */
+    #hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Floating cards on right side of hero */
+    .hero-float-card {
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(14px);
+      border: 2px solid var(--black);
+      border-radius: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════════════ -->
+<nav style="border-bottom:2px solid #0A0A0A;background:#fff;" class="sticky top-0 z-50 px-8 py-4">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+
+    <a href="#" style="text-decoration:none;display:flex;align-items:center;gap:10px;">
+      <div style="background:var(--black);width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        <span style="color:var(--lime);font-family:'Bebas Neue';font-size:20px;line-height:1;">S</span>
+      </div>
+      <span class="font-display" style="font-size:22px;letter-spacing:0.06em;">
+        SPORT<span style="color:var(--purple);">GEAR</span>
+      </span>
+    </a>
+
+    <div class="hidden md:flex items-center gap-10" style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;">
+      <a href="#" style="border-bottom:2.5px solid var(--black);padding-bottom:2px;text-decoration:none;color:var(--black);">Shop</a>
+      <a href="#" style="color:#888;text-decoration:none;">Discover</a>
+      <a href="#" style="color:#888;text-decoration:none;">About</a>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:18px;">
+      <button style="background:none;border:none;cursor:pointer;color:#555;display:flex;">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+      </button>
+      <button style="background:none;border:none;cursor:pointer;color:#555;position:relative;display:flex;">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span style="position:absolute;top:-7px;right:-7px;background:var(--lime);color:var(--black);border-radius:9999px;width:17px;height:17px;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--black);">1</span>
+      </button>
+      <a href="login.html" class="pill pill-filled" style="font-size:12px;padding:9px 24px;">Sign In</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     HERO — Ballpit Background
+     NỀN HERO — Hiệu ứng Ballpit với bóng thể thao
+══════════════════════════════════════════════ -->
+<section id="hero">
+
+  <!-- The physics canvas — balls render here -->
+  <canvas id="ballpitCanvas"></canvas>
+
+  <!-- Gradient overlay makes left text readable -->
+  <div id="hero-overlay"></div>
+
+  <!-- Content on top of canvas -->
+  <div id="hero-content" class="max-w-7xl mx-auto px-8" style="padding-top:72px;padding-bottom:80px;">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center" style="min-height:80vh;">
+
+      <!-- LEFT: Copy -->
+      <div style="display:flex;flex-direction:column;gap:22px;">
+
+        <span class="section-label">New Season — 2025 Drop</span>
+
+        <!-- Headline -->
+        <div>
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px;">
+            <span class="font-sketch" style="font-size:1.7rem;color:#999;transform:rotate(-3deg);display:inline-block;">Gen Z</span>
+            <span class="font-sketch" style="font-size:1.3rem;color:#bbb;transform:rotate(2deg);display:inline-block;">&#10022; Create</span>
+          </div>
+          <div class="font-display" style="font-size:clamp(78px,10.5vw,132px);line-height:0.88;color:var(--black);">
+            NEW <span class="highlight-lime">ERA</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;margin-top:10px;flex-wrap:wrap;">
+            <span style="border:2px solid var(--black);border-radius:9999px;padding:6px 22px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background:rgba(255,255,255,0.7);">&#8601; CREATE</span>
+            <span class="font-display" style="font-size:clamp(42px,5vw,72px);">MOVEMENT</span>
+          </div>
+        </div>
+
+        <p style="font-size:15px;color:#555;max-width:400px;line-height:1.8;">
+          Next-level sport gear for the generation that doesn't slow down.
+          Premium quality, built for the streets and the stadium.
+        </p>
+
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+          <a href="products.html" class="pill pill-filled" style="font-size:13px;padding:13px 32px;">Shop Now &rarr;</a>
+          <a href="#" class="pill" style="font-size:13px;padding:13px 32px;background:rgba(255,255,255,0.7);">Watch Lookbook</a>
+        </div>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <div class="stat-chip">
+            <div class="font-display" style="font-size:27px;color:var(--purple);">500+</div>
+            <div style="font-size:10px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">Products</div>
+          </div>
+          <div class="stat-chip">
+            <div class="font-display" style="font-size:27px;color:var(--purple);">12K+</div>
+            <div style="font-size:10px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">Happy Buyers</div>
+          </div>
+          <div class="stat-chip">
+            <div class="font-display" style="font-size:27px;color:var(--purple);">4.9&#9733;</div>
+            <div style="font-size:10px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">Avg Rating</div>
+          </div>
+        </div>
+
+        <span class="font-sketch" style="font-size:1.1rem;color:#aaa;transform:rotate(-2deg);display:inline-block;">&#8599; over 50 brands available</span>
+      </div>
+
+      <!-- RIGHT: Floating cards on top of ballpit -->
+      <div style="position:relative;height:480px;display:flex;align-items:center;justify-content:center;">
+
+        <!-- Best seller floating card (top left) -->
+        <div class="hero-float-card lift" style="position:absolute;top:20px;left:0;padding:14px 20px;">
+          <div style="font-size:9px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.12em;">&#127942; Best Seller</div>
+          <div style="font-weight:800;font-size:15px;margin-top:3px;">Air Zoom Pro 5</div>
+          <div style="color:var(--purple);font-weight:700;font-size:14px;margin-top:2px;">$129.99</div>
+          <div style="color:#FACC15;font-size:12px;margin-top:2px;">&#9733;&#9733;&#9733;&#9733;&#9733; (2.3k)</div>
+        </div>
+
+        <!-- New drop chip (top right) -->
+        <div class="hero-float-card" style="position:absolute;top:10px;right:0;padding:10px 16px;">
+          <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--purple);">&#10022; NEW DROP</span>
+          <div style="font-weight:800;font-size:13px;margin-top:2px;">Every Friday</div>
+        </div>
+
+        <!-- Promo code chip (center) -->
+        <div class="hero-float-card" style="padding:18px 28px;text-align:center;">
+          <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:#888;">Promo Code</p>
+          <p class="font-display" style="font-size:36px;color:var(--black);letter-spacing:0.14em;margin-top:2px;">GENZFIT</p>
+          <p style="font-size:11px;color:#888;margin-top:2px;">20% OFF first order</p>
+        </div>
+
+        <!-- Shipping chip (bottom left) -->
+        <div class="hero-float-card" style="position:absolute;bottom:30px;left:10px;padding:10px 16px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:1.4rem;">&#128666;</span>
+          <div>
+            <div style="font-weight:800;font-size:12px;">Free Shipping</div>
+            <div style="font-size:11px;color:#888;">Orders over $50</div>
+          </div>
+        </div>
+
+        <!-- Rating chip (bottom right) -->
+        <div class="hero-float-card" style="position:absolute;bottom:30px;right:10px;padding:10px 16px;display:flex;align-items:center;gap:8px;">
+          <span style="color:#FACC15;font-size:16px;">&#9733;</span>
+          <div>
+            <div style="font-weight:800;font-size:14px;">4.9 / 5</div>
+            <div style="font-size:11px;color:#888;">12,400+ reviews</div>
+          </div>
+        </div>
+
+        <!-- Lime accent circle -->
+        <div style="position:absolute;top:-20px;right:-20px;width:90px;height:90px;background:var(--lime);border-radius:50%;border:2px solid var(--black);z-index:-1;opacity:0.8;"></div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll hint -->
+  <div style="position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0.5;">
+    <span style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Scroll</span>
+    <div style="width:1.5px;height:32px;background:var(--black);animation:scrollBob 1.4s ease-in-out infinite;"></div>
+  </div>
+</section>
+
+<style>
+  @keyframes scrollBob {
+    0%,100% { transform: scaleY(1); opacity:0.5; }
+    50%      { transform: scaleY(0.5); opacity:1; }
+  }
+</style>
+
+<!-- ══════════════════════════════════════════════
+     MARQUEE TICKER
+══════════════════════════════════════════════ -->
+<div style="background:var(--black);border-top:2px solid var(--black);border-bottom:2px solid var(--black);padding:14px 0;" class="marquee-wrap">
+  <div class="marquee-inner font-display" style="font-size:19px;letter-spacing:0.08em;color:#fff;">
+    <span style="padding:0 40px;">FREE SHIPPING OVER $50</span>
+    <span style="padding:0 40px;color:var(--lime);">&#9733;</span>
+    <span style="padding:0 40px;">NEW DROP EVERY FRIDAY</span>
+    <span style="padding:0 40px;color:var(--lime);">&#9733;</span>
+    <span style="padding:0 40px;">USE CODE <strong style="color:var(--lime);">GENZFIT</strong> FOR 20% OFF</span>
+    <span style="padding:0 40px;color:var(--lime);">&#9733;</span>
+    <span style="padding:0 40px;">OVER 500 PRODUCTS IN STORE</span>
+    <span style="padding:0 40px;color:var(--lime);">&#9733;</span>
+    <span style="padding:0 40px;">FREE SHIPPING OVER $50</span>
+    <span style="padding:0 40px;color:var(--lime);">&#9733;</span>
+    <span style="padding:0 40px;">NEW DROP EVERY FRIDAY</span>
+    <span style="padding:0 40px;color:var(--lime);">&#9733;</span>
+    <span style="padding:0 40px;">USE CODE <strong style="color:var(--lime);">GENZFIT</strong> FOR 20% OFF</span>
+    <span style="padding:0 40px;color:var(--lime);">&#9733;</span>
+    <span style="padding:0 40px;">OVER 500 PRODUCTS IN STORE</span>
+    <span style="padding:0 40px;color:var(--lime);">&#9733;</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     CATEGORIES
+══════════════════════════════════════════════ -->
+<section class="max-w-7xl mx-auto px-8" style="padding-top:80px;padding-bottom:80px;">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:40px;">
+    <div>
+      <span class="section-label">Browse By</span>
+      <h2 class="font-display" style="font-size:clamp(38px,5vw,62px);margin-top:8px;">CATEGORIES</h2>
+    </div>
+    <a href="products.html" class="pill" style="font-size:12px;padding:10px 26px;">View All &rarr;</a>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <!-- SHOES -->
+    <a href="products.html" class="cat-card" style="background:var(--lime);min-height:380px;">
+      <div style="padding:28px 28px 0;">
+        <span class="badge" style="background:var(--black);color:var(--lime);">48 Items</span>
+        <h3 class="font-display" style="font-size:56px;line-height:0.88;color:var(--black);margin-top:14px;">SHOES</h3>
+        <div class="font-sketch" style="color:#444;font-size:15px;margin-top:10px;line-height:1.9;">
+          &#10003; Trendy chunky<br>&#10003; Trendy sneakers<br>&#10003; Chunky sneakers
+        </div>
+        <div style="display:flex;justify-content:flex-end;font-size:5.5rem;filter:drop-shadow(4px 6px 0 rgba(0,0,0,0.12));margin-top:10px;">&#128095;</div>
+      </div>
+      <div style="padding:0 28px 26px;"><span class="pill" style="font-size:12px;padding:8px 24px;background:#fff;border-color:var(--black);">SHOP &rarr;</span></div>
+    </a>
+
+    <!-- GEAR -->
+    <a href="products.html" class="cat-card" style="background:#C4B5FD;min-height:380px;">
+      <div style="padding:28px 28px 0;">
+        <span class="badge" style="background:var(--black);color:#C4B5FD;">31 Items</span>
+        <h3 class="font-display" style="font-size:56px;line-height:0.88;color:var(--black);margin-top:14px;">GEAR</h3>
+        <div class="font-sketch" style="color:#333;font-size:15px;margin-top:10px;line-height:1.9;">
+          &#10003; Cool basketball<br>&#10003; Color movement<br>&#10003; Pro accessories
+        </div>
+        <div style="display:flex;justify-content:flex-end;font-size:5.5rem;filter:drop-shadow(4px 6px 0 rgba(0,0,0,0.12));margin-top:10px;">&#9971;&#65039;</div>
+      </div>
+      <div style="padding:0 28px 26px;"><span class="pill" style="font-size:12px;padding:8px 24px;background:#fff;border-color:var(--black);">SHOP &rarr;</span></div>
+    </a>
+
+    <!-- LIFESTYLE -->
+    <a href="products.html" class="cat-card" style="background:#BAE6FD;min-height:380px;">
+      <div style="padding:28px 28px 0;">
+        <span class="badge" style="background:var(--black);color:#BAE6FD;">55 Items</span>
+        <h3 class="font-display" style="font-size:56px;line-height:0.88;color:var(--black);margin-top:14px;">LIFE<br>STYLE</h3>
+        <div class="font-sketch" style="color:#333;font-size:15px;margin-top:10px;line-height:1.9;">
+          &#10003; Oversized hoodies<br>&#10003; Color movement<br>&#10003; Street essentials
+        </div>
+        <div style="display:flex;justify-content:flex-end;font-size:5.5rem;filter:drop-shadow(4px 6px 0 rgba(0,0,0,0.12));margin-top:4px;">&#129510;</div>
+      </div>
+      <div style="padding:0 28px 26px;"><span class="pill" style="font-size:12px;padding:8px 24px;background:#fff;border-color:var(--black);">SHOP &rarr;</span></div>
+    </a>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     DARK EDITORIAL BAND
+══════════════════════════════════════════════ -->
+<section style="background:var(--black);padding:80px 32px;">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <span class="section-label" style="color:#555;">Featured Story</span>
+        <h2 class="font-display" style="font-size:clamp(48px,6.5vw,88px);color:#fff;line-height:0.88;margin-top:12px;">
+          ARTISTIC<br><span style="color:var(--lime);">FEATURE</span><br>DROP
+        </h2>
+        <p style="color:#777;margin-top:20px;line-height:1.8;max-width:400px;font-size:15px;">
+          Where sport meets street culture. Our seasonal editorial drop
+          blends performance gear with raw aesthetic.
+        </p>
+        <a href="#" class="pill pill-lime" style="font-size:13px;padding:13px 32px;margin-top:32px;display:inline-flex;">Explore Drop &rarr;</a>
+        <p class="font-sketch" style="color:#444;font-size:1.1rem;margin-top:18px;">&#8599; Limited &mdash; only 100 pieces</p>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div style="background:#1c1c1c;border-radius:20px;border:1px solid #2a2a2a;display:flex;align-items:center;justify-content:center;font-size:6rem;grid-row:span 2;min-height:280px;">&#128085;</div>
+        <div style="background:var(--lime);border-radius:20px;height:130px;display:flex;align-items:center;justify-content:center;font-size:4rem;">&#127997;</div>
+        <div style="background:#C4B5FD;border-radius:20px;height:130px;display:flex;align-items:center;justify-content:center;font-size:4rem;">&#129335;</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     LATEST DROPS
+══════════════════════════════════════════════ -->
+<section class="max-w-7xl mx-auto px-8" style="padding-top:80px;padding-bottom:80px;">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:40px;">
+    <div>
+      <span class="section-label">Just Landed</span>
+      <h2 class="font-display" style="font-size:clamp(38px,5vw,62px);margin-top:8px;">
+        LATEST <span class="doodle-under">DROPS</span>
+        <span class="font-sketch" style="font-size:1.7rem;color:#bbb;transform:rotate(-4deg);display:inline-block;margin-left:10px;">&#8599;</span>
+      </h2>
+    </div>
+    <a href="products.html" class="pill" style="font-size:12px;padding:10px 26px;">View All &rarr;</a>
+  </div>
+
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
+    <!-- Card 1: HOT -->
+    <a href="product-detail.html" class="lift" style="background:#fff;border:2px solid var(--black);border-radius:20px;overflow:hidden;display:block;text-decoration:none;color:inherit;">
+      <div style="background:#C8FF00;height:200px;display:flex;align-items:center;justify-content:center;font-size:5rem;position:relative;">
+        &#128095;
+        <span class="badge badge-hot" style="position:absolute;top:12px;left:12px;">&#128293; Hot</span>
+        <button class="wish-btn" onclick="return false;">&#9825;</button>
+      </div>
+      <div style="padding:14px;">
+        <p style="font-size:10px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:0.1em;">Nike</p>
+        <h3 style="font-weight:800;font-size:13px;margin-top:4px;line-height:1.3;">Air Zoom Pegasus 40</h3>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+          <span style="font-weight:900;font-size:17px;">$129.99</span>
+          <button onclick="return false;" class="pill pill-filled" style="font-size:11px;padding:6px 14px;">Add +</button>
+        </div>
+        <div style="color:#FACC15;font-size:11px;margin-top:6px;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:#aaa;">(247)</span></div>
+      </div>
+    </a>
+    <!-- Card 2: NEW -->
+    <a href="product-detail.html" class="lift" style="background:#fff;border:2px solid var(--black);border-radius:20px;overflow:hidden;display:block;text-decoration:none;color:inherit;">
+      <div style="background:#C4B5FD;height:200px;display:flex;align-items:center;justify-content:center;font-size:5rem;position:relative;">
+        &#128690;
+        <span class="badge badge-new" style="position:absolute;top:12px;left:12px;">&#10022; New</span>
+        <button class="wish-btn" onclick="return false;">&#9825;</button>
+      </div>
+      <div style="padding:14px;">
+        <p style="font-size:10px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:0.1em;">Adidas</p>
+        <h3 style="font-weight:800;font-size:13px;margin-top:4px;line-height:1.3;">Pro Cycling Helmet Aero 3</h3>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+          <div>
+            <span style="font-weight:900;font-size:17px;">$74.99</span>
+            <span style="color:#bbb;font-size:12px;text-decoration:line-through;margin-left:6px;">$99.99</span>
+          </div>
+          <button onclick="return false;" class="pill pill-filled" style="font-size:11px;padding:6px 14px;">Add +</button>
+        </div>
+        <div style="color:#FACC15;font-size:11px;margin-top:6px;">&#9733;&#9733;&#9733;&#9733;&#9734; <span style="color:#aaa;">(89)</span></div>
+      </div>
+    </a>
+    <!-- Card 3: SALE -->
+    <a href="product-detail.html" class="lift" style="background:#fff;border:2px solid var(--black);border-radius:20px;overflow:hidden;display:block;text-decoration:none;color:inherit;">
+      <div style="background:#BAE6FD;height:200px;display:flex;align-items:center;justify-content:center;font-size:5rem;position:relative;">
+        &#9917;
+        <span class="badge badge-sale" style="position:absolute;top:12px;left:12px;">-25% OFF</span>
+        <button class="wish-btn" onclick="return false;" style="color:#e11d48;">&#9829;</button>
+      </div>
+      <div style="padding:14px;">
+        <p style="font-size:10px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:0.1em;">Puma</p>
+        <h3 style="font-weight:800;font-size:13px;margin-top:4px;line-height:1.3;">Ultra Match Football Boots</h3>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+          <span style="font-weight:900;font-size:17px;">$89.99</span>
+          <button onclick="return false;" class="pill pill-filled" style="font-size:11px;padding:6px 14px;">Add +</button>
+        </div>
+        <div style="color:#FACC15;font-size:11px;margin-top:6px;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:#aaa;">(12)</span></div>
+      </div>
+    </a>
+    <!-- Card 4 -->
+    <a href="product-detail.html" class="lift" style="background:#fff;border:2px solid var(--black);border-radius:20px;overflow:hidden;display:block;text-decoration:none;color:inherit;">
+      <div style="background:#FED7AA;height:200px;display:flex;align-items:center;justify-content:center;font-size:5rem;position:relative;">
+        &#127936;
+        <button class="wish-btn" onclick="return false;">&#9825;</button>
+      </div>
+      <div style="padding:14px;">
+        <p style="font-size:10px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:0.1em;">Under Armour</p>
+        <h3 style="font-weight:800;font-size:13px;margin-top:4px;line-height:1.3;">Curry 11 Basketball Shoes</h3>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+          <span style="font-weight:900;font-size:17px;">$149.99</span>
+          <button onclick="return false;" class="pill pill-filled" style="font-size:11px;padding:6px 14px;">Add +</button>
+        </div>
+        <div style="color:#FACC15;font-size:11px;margin-top:6px;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:#aaa;">(341)</span></div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     PROMO BANNER
+══════════════════════════════════════════════ -->
+<section class="px-8" style="padding-bottom:80px;">
+  <div class="max-w-7xl mx-auto" style="background:var(--lime);border:2px solid var(--black);border-radius:28px;padding:52px 56px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:-50px;right:80px;width:220px;height:220px;background:rgba(0,0,0,0.06);border-radius:50%;"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;position:relative;z-index:1;">
+      <div>
+        <p class="font-sketch" style="font-size:1.3rem;transform:rotate(-2deg);display:inline-block;color:#444;">First order? &#128071;</p>
+        <h2 class="font-display" style="font-size:clamp(38px,5vw,66px);line-height:0.88;margin-top:6px;color:var(--black);">
+          GET 20% OFF<br>YOUR FIRST ORDER
+        </h2>
+        <p style="margin-top:14px;font-size:15px;font-weight:600;color:#444;">Use code at checkout &mdash; limited to first 500 customers</p>
+      </div>
+      <div style="text-align:center;flex-shrink:0;">
+        <div style="background:#fff;border:2px solid var(--black);border-radius:16px;padding:18px 38px;margin-bottom:16px;">
+          <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:#888;">Your promo code</p>
+          <p class="font-display" style="font-size:42px;color:var(--black);letter-spacing:0.14em;">GENZFIT</p>
+        </div>
+        <a href="products.html" class="pill pill-filled" style="font-size:13px;padding:13px 36px;display:inline-flex;">Shop Now &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     BRANDS STRIP
+══════════════════════════════════════════════ -->
+<section style="border-top:2px solid var(--black);border-bottom:2px solid var(--black);background:#fff;padding:28px 32px;">
+  <div class="max-w-7xl mx-auto">
+    <p class="section-label" style="margin-bottom:20px;">Trusted Brands</p>
+    <div style="display:flex;flex-wrap:wrap;gap:40px;align-items:center;justify-content:space-between;opacity:0.45;">
+      <span class="font-display" style="font-size:22px;letter-spacing:0.12em;">NIKE</span>
+      <span class="font-display" style="font-size:22px;letter-spacing:0.12em;">ADIDAS</span>
+      <span class="font-display" style="font-size:22px;letter-spacing:0.12em;">PUMA</span>
+      <span class="font-display" style="font-size:22px;letter-spacing:0.12em;">NEW BALANCE</span>
+      <span class="font-display" style="font-size:22px;letter-spacing:0.12em;">UNDER ARMOUR</span>
+      <span class="font-display" style="font-size:22px;letter-spacing:0.12em;">SPEEDO</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════ -->
+<footer style="background:var(--black);color:#fff;padding:64px 32px 32px;">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-12" style="padding-bottom:48px;border-bottom:1px solid #1f1f1f;">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <div style="background:var(--lime);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+            <span style="color:var(--black);font-family:'Bebas Neue';font-size:19px;">S</span>
+          </div>
+          <span class="font-display" style="font-size:20px;letter-spacing:0.06em;">SPORT<span style="color:var(--lime);">GEAR</span></span>
+        </div>
+        <p style="color:#555;font-size:13px;line-height:1.8;">Next-level gear for the next generation. Built for performance. Designed for culture.</p>
+      </div>
+      <div>
+        <p style="font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.15em;color:#444;margin-bottom:16px;">Shop</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <a href="#" style="color:#666;font-size:13px;text-decoration:none;">Running</a>
+          <a href="#" style="color:#666;font-size:13px;text-decoration:none;">Cycling</a>
+          <a href="#" style="color:#666;font-size:13px;text-decoration:none;">Football</a>
+          <a href="#" style="color:#666;font-size:13px;text-decoration:none;">Basketball</a>
+        </div>
+      </div>
+      <div>
+        <p style="font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.15em;color:#444;margin-bottom:16px;">Help</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <a href="#" style="color:#666;font-size:13px;text-decoration:none;">FAQ</a>
+          <a href="#" style="color:#666;font-size:13px;text-decoration:none;">Shipping</a>
+          <a href="#" style="color:#666;font-size:13px;text-decoration:none;">Returns</a>
+          <a href="#" style="color:#666;font-size:13px;text-decoration:none;">Contact</a>
+        </div>
+      </div>
+      <div>
+        <p style="font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.15em;color:#444;margin-bottom:16px;">Stay In The Loop</p>
+        <p style="color:#555;font-size:12px;margin-bottom:14px;">Drops, deals &amp; vibes &mdash; no spam.</p>
+        <div style="display:flex;border:1.5px solid #2a2a2a;border-radius:12px;overflow:hidden;">
+          <input type="email" placeholder="your@email.com"
+            style="background:transparent;border:none;color:#fff;padding:10px 14px;font-size:13px;flex:1;outline:none;font-family:'Space Grotesk',sans-serif;" />
+          <button style="background:var(--lime);color:var(--black);font-weight:800;font-size:11px;padding:10px 16px;border:none;cursor:pointer;text-transform:uppercase;letter-spacing:0.08em;">GO</button>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding-top:32px;flex-wrap:wrap;gap:12px;">
+      <p style="color:#333;font-size:12px;">&copy; 2025 SportGear Store. All rights reserved.</p>
+      <div style="display:flex;gap:24px;">
+        <a href="#" style="color:#333;font-size:12px;text-decoration:none;">Privacy</a>
+        <a href="#" style="color:#333;font-size:12px;text-decoration:none;">Terms</a>
+        <a href="#" style="color:#333;font-size:12px;text-decoration:none;">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════════
+     BALLPIT — Matter.js physics engine
+
+     HOW IT WORKS / CÁCH HOẠT ĐỘNG:
+     1. Matter.Engine  — runs the physics simulation (tính toán vật lý)
+     2. Matter.Bodies.circle — each sports ball is a physics circle body
+     3. Static rectangle walls keep balls inside the canvas
+     4. Mouse interaction — you can drag/throw balls with cursor
+     5. requestAnimationFrame — draws emoji at each body's position every frame
+
+     IN REACT: swap this for ReactBits <Ballpit> component and pass
+     custom ball renderer with emoji — the physics logic is identical
+     TRONG REACT: thay bằng component ReactBits <Ballpit> và truyền
+     hàm render emoji tuỳ chỉnh
+══════════════════════════════════════════════ -->
+<script>
+(function () {
+  const { Engine, Bodies, Composite, Mouse, MouseConstraint, Runner, Body, Events } = Matter;
+
+  const canvas  = document.getElementById('ballpitCanvas');
+  const section = document.getElementById('hero');
+
+  // Sports ball emojis — the "Ballpit balls" are these instead of plain circles
+  // Emoji bóng thể thao — thay vì hình tròn màu thông thường
+  const SPORTS_BALLS = [
+    '⚽', '⚽', '⚽',   // soccer (most common, fitting the store)
+    '🏀', '🏀',        // basketball
+    '🏐', '🏐',        // volleyball
+    '🎾',              // tennis
+    '🏈',              // american football
+    '🏉',              // rugby
+    '⚾',              // baseball
+  ];
+
+  function init() {
+    const W = section.offsetWidth;
+    const H = section.offsetHeight;
+    canvas.width  = W;
+    canvas.height = H;
+
+    // Create physics engine with moderate gravity
+    // Tạo engine vật lý với trọng lực vừa phải
+    const engine = Engine.create({ gravity: { x: 0, y: 0.6 } });
+
+    // ── Invisible walls (static bodies) ──────────────────
+    // Tường vô hình để giữ bóng bên trong canvas
+    const WALL = 60;
+    const walls = [
+      Bodies.rectangle(W / 2, H + WALL / 2,      W * 3, WALL, { isStatic: true }),  // floor
+      Bodies.rectangle(W / 2, -WALL / 2,          W * 3, WALL, { isStatic: true }),  // ceiling
+      Bodies.rectangle(-WALL / 2,      H / 2, WALL, H * 3, { isStatic: true }),      // left
+      Bodies.rectangle(W + WALL / 2,   H / 2, WALL, H * 3, { isStatic: true }),      // right
+    ];
+    Composite.add(engine.world, walls);
+
+    // ── Create sports balls ───────────────────────────────
+    // Tạo các quả bóng thể thao
+    const ballBodies = [];
+    const COUNT = 32; // number of balls / số lượng bóng
+
+    for (let i = 0; i < COUNT; i++) {
+      const radius = 26 + Math.random() * 18;       // random size: 26–44px
+      const x      = Math.random() * W;
+      const y      = -radius - Math.random() * H;   // start above screen (fall in)
+
+      const body = Bodies.circle(x, y, radius, {
+        restitution:  0.72,   // bounciness / độ nảy
+        friction:     0.08,
+        frictionAir:  0.007,  // air resistance / sức cản không khí
+        density:      0.0018,
+      });
+
+      // Attach the emoji as a custom property
+      body._emoji      = SPORTS_BALLS[i % SPORTS_BALLS.length];
+      body._radius     = radius;
+      body._fontSize   = radius * 1.85;
+
+      ballBodies.push(body);
+      Composite.add(engine.world, body);
+    }
+
+    // Give each ball a small random starting velocity
+    // Cho mỗi bóng vận tốc ban đầu ngẫu nhiên nhỏ
+    ballBodies.forEach(b => {
+      Body.setVelocity(b, {
+        x: (Math.random() - 0.5) * 5,
+        y: Math.random() * 3,
+      });
+    });
+
+    // ── Mouse interaction ─────────────────────────────────
+    // Tương tác chuột — kéo thả bóng
+    const mouse = Mouse.create(canvas);
+    mouse.pixelRatio = window.devicePixelRatio || 1;
+    const mc = MouseConstraint.create(engine, {
+      mouse,
+      constraint: { stiffness: 0.25, render: { visible: false } },
+    });
+    Composite.add(engine.world, mc);
+
+    // ── Runner ────────────────────────────────────────────
+    const runner = Runner.create();
+    Runner.run(runner, engine);
+
+    // ── Render loop (draw emoji at each body position) ────
+    // Vẽ emoji tại vị trí của mỗi body vật lý mỗi frame
+    const ctx = canvas.getContext('2d');
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      ballBodies.forEach(body => {
+        const { x, y } = body.position;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(body.angle);              // rotate with physics angle
+        ctx.font         = `${body._fontSize}px serif`;
+        ctx.textAlign    = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(body._emoji, 0, 0);    // draw emoji
+        ctx.restore();
+      });
+
+      requestAnimationFrame(draw);
+    }
+    draw();
+
+    // ── Resize handler ────────────────────────────────────
+    window.addEventListener('resize', () => {
+      // Re-init on window resize for correct canvas dimensions
+      Composite.clear(engine.world);
+      Engine.clear(engine);
+      Runner.stop(runner);
+      init();
+    }, { once: true });
+  }
+
+  // Start after DOM + fonts are loaded
+  window.addEventListener('load', init);
+})();
+</script>
+
+</body>
+</html>

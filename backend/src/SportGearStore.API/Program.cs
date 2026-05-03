@@ -12,6 +12,7 @@
 //   Response trả về → từ dưới lên trên
 // ============================================================
 
+using Scalar.AspNetCore;
 using Serilog;
 using SportGearStore.API.Middleware;
 using SportGearStore.Application;
@@ -60,7 +61,14 @@ try
 
     // ── 4. HTTP Pipeline ─────────────────────────────────────
     if (app.Environment.IsDevelopment())
+    {
+        // MapOpenApi generates the spec at /openapi/v1.json
+        // MapScalarApiReference serves the interactive UI at /scalar/v1
+        // MapOpenApi tạo spec tại /openapi/v1.json
+        // MapScalarApiReference phục vụ giao diện tương tác tại /scalar/v1
         app.MapOpenApi();
+        app.MapScalarApiReference();
+    }
 
     app.UseSerilogRequestLogging(); // Log every HTTP request automatically
 

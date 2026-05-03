@@ -126,43 +126,30 @@ namespace SportGearStore.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Id = new Guid("aaaa0001-0000-0000-0000-000000000000"),
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Sports apparel — jerseys, shorts, jackets and compression wear.",
                             IsActive = true,
-                            Name = "Running",
-                            Slug = "running"
+                            Name = "Clothing",
+                            Slug = "clothing"
                         },
                         new
                         {
-                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Id = new Guid("aaaa0002-0000-0000-0000-000000000000"),
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Sports shoes for running, football, basketball, tennis and more.",
                             IsActive = true,
-                            Name = "Cycling",
-                            Slug = "cycling"
+                            Name = "Footwear",
+                            Slug = "footwear"
                         },
                         new
                         {
-                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
+                            Id = new Guid("aaaa0003-0000-0000-0000-000000000000"),
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Sports equipment — balls, rackets, nets and protective gear.",
                             IsActive = true,
-                            Name = "Football",
-                            Slug = "football"
-                        },
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            Name = "Basketball",
-                            Slug = "basketball"
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-5555-5555-5555-555555555555"),
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            Name = "Swimming",
-                            Slug = "swimming"
+                            Name = "Equipment",
+                            Slug = "equipment"
                         });
                 });
 
@@ -330,6 +317,119 @@ namespace SportGearStore.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("bbbb0001-0000-0000-0000-000000000000"),
+                            Brand = "Nike",
+                            CategoryId = new Guid("aaaa0001-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Lightweight, sweat-wicking Dri-FIT fabric keeps you dry and comfortable during intense training sessions.",
+                            IsActive = true,
+                            Name = "Nike Dri-FIT Training T-Shirt",
+                            Price = 29.99m,
+                            Slug = "nike-dri-fit-training-tshirt"
+                        },
+                        new
+                        {
+                            Id = new Guid("bbbb0002-0000-0000-0000-000000000000"),
+                            Brand = "Adidas",
+                            CategoryId = new Guid("aaaa0001-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Classic Adidas shorts with iconic 3-stripes design. Elastic waistband with drawcord for a secure fit.",
+                            IsActive = true,
+                            Name = "Adidas Essentials 3-Stripes Shorts",
+                            Price = 34.99m,
+                            SalePrice = 27.99m,
+                            Slug = "adidas-essentials-3-stripes-shorts"
+                        },
+                        new
+                        {
+                            Id = new Guid("bbbb0003-0000-0000-0000-000000000000"),
+                            Brand = "Under Armour",
+                            CategoryId = new Guid("aaaa0001-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "ColdGear technology traps heat without bulk. Reflective details for low-light visibility. Zip pockets for secure storage.",
+                            IsActive = true,
+                            Name = "Under Armour ColdGear Running Jacket",
+                            Price = 89.99m,
+                            Slug = "under-armour-coldgear-running-jacket"
+                        },
+                        new
+                        {
+                            Id = new Guid("bbbb0004-0000-0000-0000-000000000000"),
+                            Brand = "Nike",
+                            CategoryId = new Guid("aaaa0002-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "The iconic running shoe is back. Air Zoom unit delivers a springy, responsive ride on every run.",
+                            IsActive = true,
+                            Name = "Nike Air Zoom Pegasus 40",
+                            Price = 130.00m,
+                            Slug = "nike-air-zoom-pegasus-40"
+                        },
+                        new
+                        {
+                            Id = new Guid("bbbb0005-0000-0000-0000-000000000000"),
+                            Brand = "Adidas",
+                            CategoryId = new Guid("aaaa0002-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Control-zone texture on the upper increases friction on the ball for precise passing and devastating shots.",
+                            IsActive = true,
+                            Name = "Adidas Predator Accuracy Football Boots",
+                            Price = 159.99m,
+                            SalePrice = 129.99m,
+                            Slug = "adidas-predator-accuracy-football-boots"
+                        },
+                        new
+                        {
+                            Id = new Guid("bbbb0006-0000-0000-0000-000000000000"),
+                            Brand = "Asics",
+                            CategoryId = new Guid("aaaa0002-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Maximum cushioning with GEL technology for long-distance runs. FF BLAST PLUS ECO midsole provides a soft, responsive bounce.",
+                            IsActive = true,
+                            Name = "Asics Gel-Nimbus 25 Running Shoes",
+                            Price = 149.99m,
+                            Slug = "asics-gel-nimbus-25-running-shoes"
+                        },
+                        new
+                        {
+                            Id = new Guid("bbbb0007-0000-0000-0000-000000000000"),
+                            Brand = "Nike",
+                            CategoryId = new Guid("aaaa0003-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "High-visibility design with a textured casing for better grip and ball control in all conditions.",
+                            IsActive = true,
+                            Name = "Nike Strike Football",
+                            Price = 34.99m,
+                            Slug = "nike-strike-football"
+                        },
+                        new
+                        {
+                            Id = new Guid("bbbb0008-0000-0000-0000-000000000000"),
+                            Brand = "Spalding",
+                            CategoryId = new Guid("aaaa0003-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Official NBA game ball. Full-grain leather construction for superior feel and control.",
+                            IsActive = true,
+                            Name = "Spalding NBA Official Game Basketball",
+                            Price = 179.99m,
+                            SalePrice = 149.99m,
+                            Slug = "spalding-nba-official-game-basketball"
+                        },
+                        new
+                        {
+                            Id = new Guid("bbbb0009-0000-0000-0000-000000000000"),
+                            Brand = "Yonex",
+                            CategoryId = new Guid("aaaa0003-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Rotational Generator System for steep angle attacking shots. Nanomesh Neo + Carbon Nanotube construction.",
+                            IsActive = true,
+                            Name = "Yonex Astrox 88S Badminton Racket",
+                            Price = 199.99m,
+                            Slug = "yonex-astrox-88s-badminton-racket"
+                        });
                 });
 
             modelBuilder.Entity("SportGearStore.Domain.Entities.ProductImage", b =>
@@ -363,6 +463,89 @@ namespace SportGearStore.Infrastructure.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductImages");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("cccc0001-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayOrder = 1,
+                            ImageUrl = "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=600&fit=crop&q=80",
+                            IsMain = true,
+                            ProductId = new Guid("bbbb0001-0000-0000-0000-000000000000")
+                        },
+                        new
+                        {
+                            Id = new Guid("cccc0002-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayOrder = 1,
+                            ImageUrl = "https://images.unsplash.com/photo-1591348278863-a8fb3887e2aa?w=600&h=600&fit=crop&q=80",
+                            IsMain = true,
+                            ProductId = new Guid("bbbb0002-0000-0000-0000-000000000000")
+                        },
+                        new
+                        {
+                            Id = new Guid("cccc0003-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayOrder = 1,
+                            ImageUrl = "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=600&h=600&fit=crop&q=80",
+                            IsMain = true,
+                            ProductId = new Guid("bbbb0003-0000-0000-0000-000000000000")
+                        },
+                        new
+                        {
+                            Id = new Guid("cccc0004-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayOrder = 1,
+                            ImageUrl = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=600&fit=crop&q=80",
+                            IsMain = true,
+                            ProductId = new Guid("bbbb0004-0000-0000-0000-000000000000")
+                        },
+                        new
+                        {
+                            Id = new Guid("cccc0005-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayOrder = 1,
+                            ImageUrl = "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=600&h=600&fit=crop&q=80",
+                            IsMain = true,
+                            ProductId = new Guid("bbbb0005-0000-0000-0000-000000000000")
+                        },
+                        new
+                        {
+                            Id = new Guid("cccc0006-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayOrder = 1,
+                            ImageUrl = "https://images.unsplash.com/photo-1539185441755-769473a23570?w=600&h=600&fit=crop&q=80",
+                            IsMain = true,
+                            ProductId = new Guid("bbbb0006-0000-0000-0000-000000000000")
+                        },
+                        new
+                        {
+                            Id = new Guid("cccc0007-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayOrder = 1,
+                            ImageUrl = "https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=600&h=600&fit=crop&q=80",
+                            IsMain = true,
+                            ProductId = new Guid("bbbb0007-0000-0000-0000-000000000000")
+                        },
+                        new
+                        {
+                            Id = new Guid("cccc0008-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayOrder = 1,
+                            ImageUrl = "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=600&fit=crop&q=80",
+                            IsMain = true,
+                            ProductId = new Guid("bbbb0008-0000-0000-0000-000000000000")
+                        },
+                        new
+                        {
+                            Id = new Guid("cccc0009-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayOrder = 1,
+                            ImageUrl = "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=600&h=600&fit=crop&q=80",
+                            IsMain = true,
+                            ProductId = new Guid("bbbb0009-0000-0000-0000-000000000000")
+                        });
                 });
 
             modelBuilder.Entity("SportGearStore.Domain.Entities.ProductVariant", b =>
@@ -399,6 +582,424 @@ namespace SportGearStore.Infrastructure.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductVariants");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("dddd0001-0000-0000-0000-000000000000"),
+                            Color = "Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0001-0000-0000-0000-000000000000"),
+                            Size = "S",
+                            Stock = 20
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0002-0000-0000-0000-000000000000"),
+                            Color = "Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0001-0000-0000-0000-000000000000"),
+                            Size = "M",
+                            Stock = 35
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0003-0000-0000-0000-000000000000"),
+                            Color = "Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0001-0000-0000-0000-000000000000"),
+                            Size = "L",
+                            Stock = 30
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0004-0000-0000-0000-000000000000"),
+                            Color = "Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0001-0000-0000-0000-000000000000"),
+                            Size = "XL",
+                            Stock = 15
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0005-0000-0000-0000-000000000000"),
+                            Color = "White",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0001-0000-0000-0000-000000000000"),
+                            Size = "M",
+                            Stock = 25
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0006-0000-0000-0000-000000000000"),
+                            Color = "White",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0001-0000-0000-0000-000000000000"),
+                            Size = "L",
+                            Stock = 20
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0007-0000-0000-0000-000000000000"),
+                            Color = "Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0002-0000-0000-0000-000000000000"),
+                            Size = "S",
+                            Stock = 18
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0008-0000-0000-0000-000000000000"),
+                            Color = "Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0002-0000-0000-0000-000000000000"),
+                            Size = "M",
+                            Stock = 30
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0009-0000-0000-0000-000000000000"),
+                            Color = "Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0002-0000-0000-0000-000000000000"),
+                            Size = "L",
+                            Stock = 25
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0010-0000-0000-0000-000000000000"),
+                            Color = "Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0002-0000-0000-0000-000000000000"),
+                            Size = "XL",
+                            Stock = 12
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0011-0000-0000-0000-000000000000"),
+                            Color = "Navy",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0002-0000-0000-0000-000000000000"),
+                            Size = "M",
+                            Stock = 20
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0012-0000-0000-0000-000000000000"),
+                            Color = "Navy",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0002-0000-0000-0000-000000000000"),
+                            Size = "L",
+                            Stock = 18
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0013-0000-0000-0000-000000000000"),
+                            Color = "Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0003-0000-0000-0000-000000000000"),
+                            Size = "S",
+                            Stock = 10
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0014-0000-0000-0000-000000000000"),
+                            Color = "Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0003-0000-0000-0000-000000000000"),
+                            Size = "M",
+                            Stock = 20
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0015-0000-0000-0000-000000000000"),
+                            Color = "Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0003-0000-0000-0000-000000000000"),
+                            Size = "L",
+                            Stock = 18
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0016-0000-0000-0000-000000000000"),
+                            Color = "Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 5.00m,
+                            ProductId = new Guid("bbbb0003-0000-0000-0000-000000000000"),
+                            Size = "XL",
+                            Stock = 8
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0017-0000-0000-0000-000000000000"),
+                            Color = "Red",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0003-0000-0000-0000-000000000000"),
+                            Size = "M",
+                            Stock = 12
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0018-0000-0000-0000-000000000000"),
+                            Color = "Red",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0003-0000-0000-0000-000000000000"),
+                            Size = "L",
+                            Stock = 10
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0019-0000-0000-0000-000000000000"),
+                            Color = "White/Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0004-0000-0000-0000-000000000000"),
+                            Size = "39",
+                            Stock = 8
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0020-0000-0000-0000-000000000000"),
+                            Color = "White/Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0004-0000-0000-0000-000000000000"),
+                            Size = "40",
+                            Stock = 15
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0021-0000-0000-0000-000000000000"),
+                            Color = "White/Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0004-0000-0000-0000-000000000000"),
+                            Size = "41",
+                            Stock = 20
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0022-0000-0000-0000-000000000000"),
+                            Color = "White/Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0004-0000-0000-0000-000000000000"),
+                            Size = "42",
+                            Stock = 18
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0023-0000-0000-0000-000000000000"),
+                            Color = "White/Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0004-0000-0000-0000-000000000000"),
+                            Size = "43",
+                            Stock = 12
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0024-0000-0000-0000-000000000000"),
+                            Color = "White/Black",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0004-0000-0000-0000-000000000000"),
+                            Size = "44",
+                            Stock = 6
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0025-0000-0000-0000-000000000000"),
+                            Color = "Black/Red",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0005-0000-0000-0000-000000000000"),
+                            Size = "39",
+                            Stock = 6
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0026-0000-0000-0000-000000000000"),
+                            Color = "Black/Red",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0005-0000-0000-0000-000000000000"),
+                            Size = "40",
+                            Stock = 10
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0027-0000-0000-0000-000000000000"),
+                            Color = "Black/Red",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0005-0000-0000-0000-000000000000"),
+                            Size = "41",
+                            Stock = 14
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0028-0000-0000-0000-000000000000"),
+                            Color = "Black/Red",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0005-0000-0000-0000-000000000000"),
+                            Size = "42",
+                            Stock = 16
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0029-0000-0000-0000-000000000000"),
+                            Color = "Black/Red",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0005-0000-0000-0000-000000000000"),
+                            Size = "43",
+                            Stock = 10
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0030-0000-0000-0000-000000000000"),
+                            Color = "Black/Red",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0005-0000-0000-0000-000000000000"),
+                            Size = "44",
+                            Stock = 5
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0031-0000-0000-0000-000000000000"),
+                            Color = "Blue/Silver",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0006-0000-0000-0000-000000000000"),
+                            Size = "39",
+                            Stock = 7
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0032-0000-0000-0000-000000000000"),
+                            Color = "Blue/Silver",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0006-0000-0000-0000-000000000000"),
+                            Size = "40",
+                            Stock = 12
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0033-0000-0000-0000-000000000000"),
+                            Color = "Blue/Silver",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0006-0000-0000-0000-000000000000"),
+                            Size = "41",
+                            Stock = 18
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0034-0000-0000-0000-000000000000"),
+                            Color = "Blue/Silver",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0006-0000-0000-0000-000000000000"),
+                            Size = "42",
+                            Stock = 15
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0035-0000-0000-0000-000000000000"),
+                            Color = "Blue/Silver",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0006-0000-0000-0000-000000000000"),
+                            Size = "43",
+                            Stock = 9
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0036-0000-0000-0000-000000000000"),
+                            Color = "Blue/Silver",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0006-0000-0000-0000-000000000000"),
+                            Size = "44",
+                            Stock = 4
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0037-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0007-0000-0000-0000-000000000000"),
+                            Size = "4",
+                            Stock = 25
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0038-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 5.00m,
+                            ProductId = new Guid("bbbb0007-0000-0000-0000-000000000000"),
+                            Size = "5",
+                            Stock = 40
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0039-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = -20.00m,
+                            ProductId = new Guid("bbbb0008-0000-0000-0000-000000000000"),
+                            Size = "5 (Youth)",
+                            Stock = 15
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0040-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0008-0000-0000-0000-000000000000"),
+                            Size = "7 (Official)",
+                            Stock = 30
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0041-0000-0000-0000-000000000000"),
+                            Color = "Black/Silver",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = 0m,
+                            ProductId = new Guid("bbbb0009-0000-0000-0000-000000000000"),
+                            Size = "3U",
+                            Stock = 12
+                        },
+                        new
+                        {
+                            Id = new Guid("dddd0042-0000-0000-0000-000000000000"),
+                            Color = "Black/Silver",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExtraPrice = -10.00m,
+                            ProductId = new Guid("bbbb0009-0000-0000-0000-000000000000"),
+                            Size = "4U",
+                            Stock = 15
+                        });
                 });
 
             modelBuilder.Entity("SportGearStore.Domain.Entities.Review", b =>

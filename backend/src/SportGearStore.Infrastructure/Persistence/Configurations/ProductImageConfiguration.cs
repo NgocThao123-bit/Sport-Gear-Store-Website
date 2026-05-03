@@ -15,5 +15,23 @@ public class ProductImageConfiguration : IEntityTypeConfiguration<ProductImage>
                .WithMany(p => p.Images)
                .HasForeignKey(i => i.ProductId)
                .OnDelete(DeleteBehavior.Cascade);
+
+        // ── Seed: one main image per product ─────────────────────
+        // Unsplash JPG photos — work with object-cover fill layout.
+        var seed = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        builder.HasData(
+            // Clothing
+            new ProductImage { Id = Guid.Parse("cccc0001-0000-0000-0000-000000000000"), ProductId = Guid.Parse("bbbb0001-0000-0000-0000-000000000000"), ImageUrl = "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=600&fit=crop&q=80", IsMain = true, DisplayOrder = 1, CreatedAt = seed },
+            new ProductImage { Id = Guid.Parse("cccc0002-0000-0000-0000-000000000000"), ProductId = Guid.Parse("bbbb0002-0000-0000-0000-000000000000"), ImageUrl = "https://images.unsplash.com/photo-1591348278863-a8fb3887e2aa?w=600&h=600&fit=crop&q=80", IsMain = true, DisplayOrder = 1, CreatedAt = seed },
+            new ProductImage { Id = Guid.Parse("cccc0003-0000-0000-0000-000000000000"), ProductId = Guid.Parse("bbbb0003-0000-0000-0000-000000000000"), ImageUrl = "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=600&h=600&fit=crop&q=80", IsMain = true, DisplayOrder = 1, CreatedAt = seed },
+            // Footwear
+            new ProductImage { Id = Guid.Parse("cccc0004-0000-0000-0000-000000000000"), ProductId = Guid.Parse("bbbb0004-0000-0000-0000-000000000000"), ImageUrl = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=600&fit=crop&q=80", IsMain = true, DisplayOrder = 1, CreatedAt = seed },
+            new ProductImage { Id = Guid.Parse("cccc0005-0000-0000-0000-000000000000"), ProductId = Guid.Parse("bbbb0005-0000-0000-0000-000000000000"), ImageUrl = "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=600&h=600&fit=crop&q=80", IsMain = true, DisplayOrder = 1, CreatedAt = seed },
+            new ProductImage { Id = Guid.Parse("cccc0006-0000-0000-0000-000000000000"), ProductId = Guid.Parse("bbbb0006-0000-0000-0000-000000000000"), ImageUrl = "https://images.unsplash.com/photo-1539185441755-769473a23570?w=600&h=600&fit=crop&q=80", IsMain = true, DisplayOrder = 1, CreatedAt = seed },
+            // Equipment
+            new ProductImage { Id = Guid.Parse("cccc0007-0000-0000-0000-000000000000"), ProductId = Guid.Parse("bbbb0007-0000-0000-0000-000000000000"), ImageUrl = "https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=600&h=600&fit=crop&q=80", IsMain = true, DisplayOrder = 1, CreatedAt = seed },
+            new ProductImage { Id = Guid.Parse("cccc0008-0000-0000-0000-000000000000"), ProductId = Guid.Parse("bbbb0008-0000-0000-0000-000000000000"), ImageUrl = "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=600&fit=crop&q=80", IsMain = true, DisplayOrder = 1, CreatedAt = seed },
+            new ProductImage { Id = Guid.Parse("cccc0009-0000-0000-0000-000000000000"), ProductId = Guid.Parse("bbbb0009-0000-0000-0000-000000000000"), ImageUrl = "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=600&h=600&fit=crop&q=80", IsMain = true, DisplayOrder = 1, CreatedAt = seed }
+        );
     }
 }

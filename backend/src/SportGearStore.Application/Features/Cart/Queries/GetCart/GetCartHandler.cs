@@ -23,7 +23,7 @@ public class GetCartHandler : IRequestHandler<GetCartQuery, CartDto>
         // Return empty cart if none exists yet
         // Trả về giỏ hàng trống nếu chưa có
         if (cart == null)
-            return new CartDto(Guid.Empty, new List<CartItemDto>(), 0, 0);
+            return new CartDto { Id = Guid.Empty, Items = new List<CartItemDto>(), TotalAmount = 0, TotalItems = 0 };
 
         return _mapper.Map<CartDto>(cart);
     }
