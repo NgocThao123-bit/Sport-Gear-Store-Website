@@ -25,6 +25,9 @@ public class CartRepository : ICartRepository
     public async Task AddAsync(Cart cart, CancellationToken cancellationToken = default)
         => await _context.Carts.AddAsync(cart, cancellationToken);
 
+    public async Task AddItemAsync(CartItem item, CancellationToken cancellationToken = default)
+        => await _context.CartItems.AddAsync(item, cancellationToken);
+
     public void Update(Cart cart)
         => _context.Carts.Update(cart);
 }

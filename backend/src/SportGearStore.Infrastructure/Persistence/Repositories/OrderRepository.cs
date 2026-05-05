@@ -59,6 +59,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
         var items = await query
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
+            .Include(o => o.Items)   // needed for FirstItemImageUrl / FirstItemName mapping
             .ToListAsync(cancellationToken);
 
         return new PagedResult<Order>

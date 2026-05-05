@@ -57,8 +57,11 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-8">
             <NavLink to="/"         className={linkClass} end>Home</NavLink>
             <NavLink to="/products" className={linkClass}>Shop</NavLink>
+            {/* My Orders — only for logged-in customers (not admin) */}
+            {user && !user.isAdmin && (
+              <NavLink to="/orders" className={linkClass}>My Orders</NavLink>
+            )}
             {/* Show admin link only when logged-in user is Admin */}
-            {/* Hiển thị link admin chỉ khi người dùng đăng nhập là Admin */}
             {user?.isAdmin && (
               <NavLink to="/admin" className={linkClass}>Admin</NavLink>
             )}
@@ -88,9 +91,12 @@ export default function Navbar() {
             {/* Auth: hiển thị tên người dùng + đăng xuất HOẶC nút đăng nhập */}
             {user ? (
               <div className="flex items-center gap-3">
-                <span className="text-xs font-bold text-brand-ink/60 tracking-wide">
+                <Link
+                  to="/profile"
+                  className="text-xs font-bold text-brand-ink/60 tracking-wide hover:text-brand-purple transition-colors"
+                >
                   {user.email.split('@')[0]}
-                </span>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="px-4 py-2 text-xs font-bold tracking-widest uppercase bg-brand-ink text-brand-cream rounded-full hover:bg-brand-purple transition-colors"
@@ -142,8 +148,14 @@ export default function Navbar() {
           <NavLink to="/cart"     className={linkClass}       onClick={() => setMenuOpen(false)}>
             Cart {itemCount > 0 && <span className="ml-1 text-brand-purple">({itemCount})</span>}
           </NavLink>
+          {user && !user.isAdmin && (
+            <NavLink to="/orders" className={linkClass}       onClick={() => setMenuOpen(false)}>My Orders</NavLink>
+          )}
           {user?.isAdmin && (
             <NavLink to="/admin" className={linkClass}        onClick={() => setMenuOpen(false)}>Admin</NavLink>
+          )}
+          {user && (
+            <NavLink to="/profile" className={linkClass} onClick={() => setMenuOpen(false)}>Profile</NavLink>
           )}
           {user ? (
             <button onClick={handleLogout} className="text-left text-sm font-bold tracking-widest uppercase text-red-500">

@@ -13,5 +13,6 @@ public interface ICartRepository
     // Load giỏ hàng với tất cả items, thông tin sản phẩm và biến thể
     Task<Cart?> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
     Task AddAsync(Cart cart, CancellationToken cancellationToken = default);
+    Task AddItemAsync(CartItem item, CancellationToken cancellationToken = default);
     void Update(Cart cart);
 }

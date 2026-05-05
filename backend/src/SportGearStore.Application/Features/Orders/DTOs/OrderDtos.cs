@@ -11,14 +11,16 @@ namespace SportGearStore.Application.Features.Orders.DTOs;
 // Nhẹ — dùng trong trang danh sách / lịch sử đơn hàng và bảng admin
 public record OrderDto
 {
-    public Guid          Id            { get; init; }
-    public string        OrderNumber   { get; init; } = string.Empty;
-    public string        CustomerEmail { get; init; } = string.Empty;
-    public OrderStatus   Status        { get; init; }
-    public PaymentStatus PaymentStatus { get; init; }
-    public decimal       TotalAmount   { get; init; }
-    public int           ItemCount     { get; init; }
-    public DateTime      CreatedAt     { get; init; }
+    public Guid          Id                 { get; init; }
+    public string        OrderNumber        { get; init; } = string.Empty;
+    public string        CustomerEmail      { get; init; } = string.Empty;
+    public string?       FirstItemImageUrl  { get; init; }
+    public string?       FirstItemName      { get; init; }
+    public OrderStatus   Status             { get; init; }
+    public PaymentStatus PaymentStatus      { get; init; }
+    public decimal       TotalAmount        { get; init; }
+    public int           ItemCount          { get; init; }
+    public DateTime      CreatedAt          { get; init; }
 }
 
 // Full detail — used in order detail page

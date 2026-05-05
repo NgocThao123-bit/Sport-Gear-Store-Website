@@ -82,7 +82,13 @@ export default function Cart() {
           <p className="text-brand-ink/50 text-sm mb-8">
             Your order has been confirmed. We'll get it shipped as soon as possible.
           </p>
-          <div className="flex gap-3 justify-center">
+          <div className="flex gap-3 justify-center flex-wrap">
+            <Link
+              to="/orders"
+              className="px-8 py-4 bg-brand-lime text-brand-ink font-bold text-sm tracking-widest uppercase rounded-full border-2 border-brand-ink hover:bg-brand-purple hover:text-white transition-colors"
+            >
+              View My Orders
+            </Link>
             <Link
               to="/products"
               className="px-8 py-4 bg-brand-ink text-brand-lime font-bold text-sm tracking-widest uppercase rounded-full hover:bg-brand-purple transition-colors"

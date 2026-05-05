@@ -25,9 +25,9 @@ public class AddToCartHandler : IRequestHandler<AddToCartCommand>
 
     public async Task Handle(AddToCartCommand request, CancellationToken cancellationToken)
     {
-        // 1. Verify product exists and is active
-        //    Xác minh sản phẩm tồn tại và đang hoạt động
-        var product = await _unitOfWork.Products.GetByIdAsync(request.ProductId, cancellationToken);
+        // 1. Verify product exists and is active — AsNoTracking so EF doesn't interfere with SaveChanges
+        //    Xác minh sản phẩm tồn tại — AsNoTracking để EF không can thiệp vào SaveChanges
+        var product = await _unitOfWork.Products.GetWithVariantsAsync(request.ProductId, cancellationToken);
         if (product == null || !product.IsActive)
             throw new NotFoundException(nameof(Product), request.ProductId);
 
@@ -51,8 +51,8 @@ public class AddToCartHandler : IRequestHandler<AddToCartCommand>
             await _unitOfWork.Carts.AddAsync(cart, cancellationToken);
         }
 
-        // 4. If same item already in cart, increase quantity
-        //    Nếu item đó đã có trong giỏ, tăng số lượng
+        // 4. Update existing item quantity or explicitly track a new CartItem
+        //    Tăng số lượng item đã có hoặc theo dõi CartItem mới một cách tường minh
         var existingItem = cart.Items.FirstOrDefault(i =>
             i.ProductId == request.ProductId &&
             i.ProductVariantId == request.ProductVariantId);
@@ -60,22 +60,24 @@ public class AddToCartHandler : IRequestHandler<AddToCartCommand>
         if (existingItem != null)
         {
             existingItem.Quantity += request.Quantity;
-            existingItem.UnitPrice = unitPrice; // Refresh price in case it changed
+            existingItem.UnitPrice = unitPrice;
         }
         else
         {
-            cart.Items.Add(new CartItem
+            // Use AddItemAsync (explicit DbSet.Add) instead of collection navigation
+            // to guarantee the CartItem enters the change tracker in Added state.
+            // Dùng AddItemAsync (DbSet.Add tường minh) thay vì navigation collection
+            // để đảm bảo CartItem được thêm vào change tracker ở trạng thái Added.
+            await _unitOfWork.Carts.AddItemAsync(new CartItem
             {
-                CartId = cart.Id,
-                ProductId = request.ProductId,
+                CartId           = cart.Id,
+                ProductId        = request.ProductId,
                 ProductVariantId = request.ProductVariantId,
-                Quantity = request.Quantity,
-                UnitPrice = unitPrice
-            });
+                Quantity         = request.Quantity,
+                UnitPrice        = unitPrice
+            }, cancellationToken);
         }
 
-        // No explicit Update() call needed — EF Core's change tracker handles both cases:
-        // new cart ("Added" state from AddAsync) and existing cart ("Modified" from property changes)
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

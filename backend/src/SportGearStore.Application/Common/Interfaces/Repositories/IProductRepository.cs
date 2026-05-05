@@ -29,6 +29,10 @@ public interface IProductRepository : IGenericRepository<Product>
     // Load sản phẩm với đầy đủ dữ liệu liên quan (ảnh, biến thể, đánh giá)
     Task<Product?> GetDetailAsync(Guid id, CancellationToken cancellationToken = default);
 
+    // Lightweight read for cart handler — only price + variants, NOT tracked by EF
+    // Đọc nhẹ cho cart handler — chỉ giá + biến thể, KHÔNG được EF theo dõi
+    Task<Product?> GetWithVariantsAsync(Guid id, CancellationToken cancellationToken = default);
+
     // Same as GetDetailAsync but looks up by slug (used by the product detail page)
     Task<Product?> GetDetailBySlugAsync(string slug, CancellationToken cancellationToken = default);
 

@@ -86,12 +86,13 @@ public class OrdersController : ControllerBase
     [HttpGet("admin/all")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetAllOrders(
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize   = 20,
+        [FromQuery] int          pageNumber = 1,
+        [FromQuery] int          pageSize   = 10,
+        [FromQuery] OrderStatus? status     = null,
         CancellationToken cancellationToken = default)
     {
         var result = await _sender.Send(
-            new GetAllOrdersQuery(pageNumber, pageSize),
+            new GetAllOrdersQuery(pageNumber, pageSize, status),
             cancellationToken);
         return Ok(result);
     }
