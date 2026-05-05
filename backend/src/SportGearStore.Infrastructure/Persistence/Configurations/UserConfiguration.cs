@@ -27,6 +27,30 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         // Email phải là duy nhất trên tất cả người dùng
         builder.HasIndex(u => u.Email).IsUnique();
 
+        var seed = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        builder.HasData(
+            new User
+            {
+                Id           = Guid.Parse("eeee0001-0000-0000-0000-000000000000"),
+                FirstName    = "Admin",
+                LastName     = "SportGear",
+                Email        = "admin@sportgear.com",
+                PasswordHash = "$2a$11$78w0v1RHb2LhBcPH9fHn6.mxdX6DAqrwZCh3fR9/CWjsf0xQ.LyAW",
+                IsActive     = true,
+                CreatedAt    = seed
+            },
+            new User
+            {
+                Id           = Guid.Parse("eeee0002-0000-0000-0000-000000000000"),
+                FirstName    = "Test",
+                LastName     = "Customer",
+                Email        = "customer@example.com",
+                PasswordHash = "$2a$11$RRhUAvR6wylzCNkpDzr4FOLpdLBnch1Aonu1YXcBz68gUbYA3CG2e",
+                IsActive     = true,
+                CreatedAt    = seed
+            }
+        );
+
         // One user has one cart
         // Một user có một giỏ hàng
         builder.HasOne(u => u.Cart)

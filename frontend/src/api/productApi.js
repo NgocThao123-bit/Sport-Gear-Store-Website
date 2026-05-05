@@ -10,9 +10,9 @@ export const productApi = {
   // Lấy danh sách sản phẩm có phân trang và lọc
   getAll: (params) => axiosClient.get('/products', { params }),
 
-  // GET /api/products/:slug — product detail page
+  // GET /api/products/slug/:slug — product detail page
   // Lấy chi tiết sản phẩm theo slug (URL-friendly name)
-  getBySlug: (slug) => axiosClient.get(`/products/${slug}`),
+  getBySlug: (slug) => axiosClient.get(`/products/slug/${slug}`),
 
   // POST /api/products — Admin only
   // Tạo sản phẩm mới (chỉ Admin)

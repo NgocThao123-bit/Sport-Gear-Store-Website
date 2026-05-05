@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using SportGearStore.Application.Common.Interfaces.Services;
 using SportGearStore.Application.Features.Orders.Commands.CreateOrder;
 using SportGearStore.Application.Features.Orders.Commands.UpdateOrderStatus;
+using SportGearStore.Application.Features.Orders.Queries.GetAllOrders;
 using SportGearStore.Application.Features.Orders.Queries.GetOrderById;
 using SportGearStore.Application.Features.Orders.Queries.GetOrders;
 using SportGearStore.Domain.Enums;
@@ -76,6 +77,21 @@ public class OrdersController : ControllerBase
     {
         var result = await _sender.Send(
             new GetOrderByIdQuery(id, _currentUser.UserId!.Value, _currentUser.IsAdmin),
+            cancellationToken);
+        return Ok(result);
+    }
+
+    // GET /api/orders/admin/all — Admin only, all orders paginated
+    // NOTE: this route must be declared BEFORE {id:guid} so the router matches "admin/all" literally
+    [HttpGet("admin/all")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetAllOrders(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize   = 20,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await _sender.Send(
+            new GetAllOrdersQuery(pageNumber, pageSize),
             cancellationToken);
         return Ok(result);
     }

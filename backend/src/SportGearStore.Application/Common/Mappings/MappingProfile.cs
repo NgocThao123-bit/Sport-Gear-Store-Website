@@ -79,7 +79,8 @@ public class MappingProfile : Profile
 
         // ── Orders ────────────────────────────────────────────
         CreateMap<Order, OrderDto>()
-            .ForMember(d => d.ItemCount, o => o.MapFrom(s => s.Items.Count));
+            .ForMember(d => d.ItemCount, o => o.MapFrom(s => s.Items.Count))
+            .ForMember(d => d.CustomerEmail, o => o.MapFrom(s => s.User != null ? s.User.Email : string.Empty));
 
         CreateMap<Order, OrderDetailDto>();
         CreateMap<OrderItem, OrderItemDto>();

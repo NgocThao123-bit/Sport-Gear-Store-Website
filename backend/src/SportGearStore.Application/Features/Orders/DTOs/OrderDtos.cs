@@ -7,12 +7,13 @@ using SportGearStore.Domain.Enums;
 
 namespace SportGearStore.Application.Features.Orders.DTOs;
 
-// Lightweight — used in order list / history page
-// Nhẹ — dùng trong trang danh sách / lịch sử đơn hàng
+// Lightweight — used in order list / history page and admin order table
+// Nhẹ — dùng trong trang danh sách / lịch sử đơn hàng và bảng admin
 public record OrderDto
 {
     public Guid          Id            { get; init; }
     public string        OrderNumber   { get; init; } = string.Empty;
+    public string        CustomerEmail { get; init; } = string.Empty;
     public OrderStatus   Status        { get; init; }
     public PaymentStatus PaymentStatus { get; init; }
     public decimal       TotalAmount   { get; init; }

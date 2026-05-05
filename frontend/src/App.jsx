@@ -1,14 +1,15 @@
 // App.jsx — defines all client-side routes
 // App.jsx — định nghĩa tất cả routes phía client
 import { Routes, Route } from 'react-router-dom';
-import Navbar   from './components/layout/Navbar';
-import Footer   from './components/layout/Footer';
-import Home     from './pages/Home';
-import Products from './pages/Products';
-import ProductDetail from './pages/ProductDetail';
-import Cart     from './pages/Cart';
-import Login    from './pages/Login';
-import Register from './pages/Register';
+import Navbar         from './components/layout/Navbar';
+import Footer         from './components/layout/Footer';
+import ProtectedRoute from './components/layout/ProtectedRoute';
+import Home           from './pages/Home';
+import Products       from './pages/Products';
+import ProductDetail  from './pages/ProductDetail';
+import Cart           from './pages/Cart';
+import Login          from './pages/Login';
+import Register       from './pages/Register';
 
 // Admin pages
 import AdminDashboard from './pages/admin/Dashboard';
@@ -28,10 +29,10 @@ export default function App() {
         <Route path="/login"          element={<Login />} />
         <Route path="/register"       element={<Register />} />
 
-        {/* ── Admin routes ── */}
-        <Route path="/admin"          element={<AdminDashboard />} />
-        <Route path="/admin/products" element={<AdminProducts />} />
-        <Route path="/admin/orders"   element={<AdminOrders />} />
+        {/* ── Admin routes (admin-only guard) ── */}
+        <Route path="/admin"          element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/admin/products" element={<ProtectedRoute adminOnly><AdminProducts /></ProtectedRoute>} />
+        <Route path="/admin/orders"   element={<ProtectedRoute adminOnly><AdminOrders /></ProtectedRoute>} />
       </Routes>
       <Footer />
     </>

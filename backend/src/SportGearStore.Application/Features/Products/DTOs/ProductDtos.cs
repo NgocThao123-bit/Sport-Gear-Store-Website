@@ -20,9 +20,12 @@ public record ProductDto
     public string    Name          { get; init; } = string.Empty;
     public string    Slug          { get; init; } = string.Empty;
     public string    Brand         { get; init; } = string.Empty;
+    public string?   Description   { get; init; }
     public decimal   Price         { get; init; }
     public decimal?  SalePrice     { get; init; }
+    public Guid      CategoryId    { get; init; }
     public string    CategoryName  { get; init; } = string.Empty;
+    public bool      IsActive      { get; init; }
     public string?   MainImageUrl  { get; init; }
     public double    AverageRating { get; init; }
     public int       ReviewCount   { get; init; }

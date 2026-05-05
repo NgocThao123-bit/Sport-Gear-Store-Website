@@ -27,5 +27,10 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
         builder.HasOne(ur => ur.Role)
                .WithMany(r => r.UserRoles)
                .HasForeignKey(ur => ur.RoleId);
+
+        builder.HasData(
+            new UserRole { UserId = Guid.Parse("eeee0001-0000-0000-0000-000000000000"), RoleId = 2 }, // Admin
+            new UserRole { UserId = Guid.Parse("eeee0002-0000-0000-0000-000000000000"), RoleId = 1 }  // Customer
+        );
     }
 }

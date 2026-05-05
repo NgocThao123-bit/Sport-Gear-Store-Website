@@ -18,6 +18,7 @@ using SportGearStore.Application.Features.Products.Commands.CreateProduct;
 using SportGearStore.Application.Features.Products.Commands.DeleteProduct;
 using SportGearStore.Application.Features.Products.Commands.UpdateProduct;
 using SportGearStore.Application.Features.Products.Queries.GetProductById;
+using SportGearStore.Application.Features.Products.Queries.GetProductBySlug;
 using SportGearStore.Application.Features.Products.Queries.GetProducts;
 
 namespace SportGearStore.API.Controllers;
@@ -40,6 +41,16 @@ public class ProductsController : ControllerBase
         CancellationToken cancellationToken)
     {
         var result = await _sender.Send(query, cancellationToken);
+        return Ok(result);
+    }
+
+    // GET /api/products/slug/{slug} — product detail by URL slug
+    [HttpGet("slug/{slug}")]
+    public async Task<IActionResult> GetProductBySlug(
+        string slug,
+        CancellationToken cancellationToken)
+    {
+        var result = await _sender.Send(new GetProductBySlugQuery(slug), cancellationToken);
         return Ok(result);
     }
 

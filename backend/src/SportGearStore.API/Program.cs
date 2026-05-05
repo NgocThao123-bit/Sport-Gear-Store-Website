@@ -12,6 +12,7 @@
 //   Response trả về → từ dưới lên trên
 // ============================================================
 
+using System.Text.Json.Serialization;
 using Scalar.AspNetCore;
 using Serilog;
 using SportGearStore.API.Middleware;
@@ -44,7 +45,11 @@ try
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(builder.Configuration);
 
-    builder.Services.AddControllers();
+    // Serialize enums as strings (e.g. "Pending" not 1) — much friendlier for the frontend
+    // Serialize enum thành string (vd: "Pending" thay vì 1) — dễ dùng hơn ở frontend
+    builder.Services.AddControllers()
+        .AddJsonOptions(opts =>
+            opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
     builder.Services.AddOpenApi();
 
     // ── 3. CORS — allow React frontend to call the API ───────
@@ -52,7 +57,7 @@ try
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowFrontend", policy =>
-            policy.WithOrigins("http://localhost:5173")  // Vite default port
+            policy.WithOrigins("http://localhost:5173", "http://localhost:5174")
                   .AllowAnyHeader()
                   .AllowAnyMethod());
     });

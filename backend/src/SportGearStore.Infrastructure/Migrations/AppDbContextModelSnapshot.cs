@@ -1120,6 +1120,28 @@ namespace SportGearStore.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("eeee0001-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "admin@sportgear.com",
+                            FirstName = "Admin",
+                            IsActive = true,
+                            LastName = "SportGear",
+                            PasswordHash = "$2a$11$78w0v1RHb2LhBcPH9fHn6.mxdX6DAqrwZCh3fR9/CWjsf0xQ.LyAW"
+                        },
+                        new
+                        {
+                            Id = new Guid("eeee0002-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "customer@example.com",
+                            FirstName = "Test",
+                            IsActive = true,
+                            LastName = "Customer",
+                            PasswordHash = "$2a$11$RRhUAvR6wylzCNkpDzr4FOLpdLBnch1Aonu1YXcBz68gUbYA3CG2e"
+                        });
                 });
 
             modelBuilder.Entity("SportGearStore.Domain.Entities.UserRole", b =>
@@ -1135,6 +1157,18 @@ namespace SportGearStore.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("UserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("eeee0001-0000-0000-0000-000000000000"),
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            UserId = new Guid("eeee0002-0000-0000-0000-000000000000"),
+                            RoleId = 1
+                        });
                 });
 
             modelBuilder.Entity("SportGearStore.Domain.Entities.Cart", b =>

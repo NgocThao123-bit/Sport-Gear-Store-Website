@@ -29,5 +29,8 @@ public interface IProductRepository : IGenericRepository<Product>
     // Load sản phẩm với đầy đủ dữ liệu liên quan (ảnh, biến thể, đánh giá)
     Task<Product?> GetDetailAsync(Guid id, CancellationToken cancellationToken = default);
 
+    // Same as GetDetailAsync but looks up by slug (used by the product detail page)
+    Task<Product?> GetDetailBySlugAsync(string slug, CancellationToken cancellationToken = default);
+
     Task<bool> SlugExistsAsync(string slug, Guid? excludeId = null, CancellationToken cancellationToken = default);
 }

@@ -74,7 +74,8 @@ public class AddToCartHandler : IRequestHandler<AddToCartCommand>
             });
         }
 
-        _unitOfWork.Carts.Update(cart);
+        // No explicit Update() call needed — EF Core's change tracker handles both cases:
+        // new cart ("Added" state from AddAsync) and existing cart ("Modified" from property changes)
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

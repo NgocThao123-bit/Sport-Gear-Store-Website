@@ -33,32 +33,36 @@ import heroImg      from '../assets/images/hero.png';
 import imgClothing  from '../assets/images/Clothing.png';
 import imgFootwear  from '../assets/images/Footwear.png';
 import imgEquipment from '../assets/images/Equipment.png';
+import logoNike        from '../assets/images/logos/nike.png';
+import logoAdidas      from '../assets/images/logos/adidas.png';
+import logoPuma        from '../assets/images/logos/puma.png';
+import logoUnderArmour from '../assets/images/logos/under-armour.png';
+import logoNewBalance  from '../assets/images/logos/new-balance.png';
+import logoReebok      from '../assets/images/logos/reebok.png';
+import logoAsics       from '../assets/images/logos/asics.png';
+import logoNorthFace   from '../assets/images/logos/north-face.png';
+import logoFila        from '../assets/images/logos/fila.png';
 
-// ── Marquee items ─────────────────────────────────────────────────────────
-// Items marquee — lặp lại để vòng lặp trông liền mạch
-// Duplicate array so the marquee loop looks seamless
-// Lặp lại mảng để vòng lặp marquee trông liền mạch
+// ── Marquee brand list (duplicated for seamless loop) ─────────────────────
 const BRANDS = [
-  { name: 'Nike',           logo: 'https://logo.clearbit.com/nike.com' },
-  { name: 'Adidas',         logo: 'https://logo.clearbit.com/adidas.com' },
-  { name: 'Puma',           logo: 'https://logo.clearbit.com/puma.com' },
-  { name: 'Under Armour',   logo: 'https://logo.clearbit.com/underarmour.com' },
-  { name: 'New Balance',    logo: 'https://logo.clearbit.com/newbalance.com' },
-  { name: 'Reebok',         logo: 'https://logo.clearbit.com/reebok.com' },
-  { name: 'Asics',          logo: 'https://logo.clearbit.com/asics.com' },
-  { name: 'The North Face', logo: 'https://logo.clearbit.com/thenorthface.com' },
-  { name: 'Columbia',       logo: 'https://logo.clearbit.com/columbia.com' },
-  { name: 'Fila',           logo: 'https://logo.clearbit.com/fila.com' },
-  { name: 'Nike',           logo: 'https://logo.clearbit.com/nike.com' },
-  { name: 'Adidas',         logo: 'https://logo.clearbit.com/adidas.com' },
-  { name: 'Puma',           logo: 'https://logo.clearbit.com/puma.com' },
-  { name: 'Under Armour',   logo: 'https://logo.clearbit.com/underarmour.com' },
-  { name: 'New Balance',    logo: 'https://logo.clearbit.com/newbalance.com' },
-  { name: 'Reebok',         logo: 'https://logo.clearbit.com/reebok.com' },
-  { name: 'Asics',          logo: 'https://logo.clearbit.com/asics.com' },
-  { name: 'The North Face', logo: 'https://logo.clearbit.com/thenorthface.com' },
-  { name: 'Columbia',       logo: 'https://logo.clearbit.com/columbia.com' },
-  { name: 'Fila',           logo: 'https://logo.clearbit.com/fila.com' },
+  { name: 'Nike',           logo: logoNike        },
+  { name: 'Adidas',         logo: logoAdidas      },
+  { name: 'Puma',           logo: logoPuma        },
+  { name: 'Under Armour',   logo: logoUnderArmour },
+  { name: 'New Balance',    logo: logoNewBalance  },
+  { name: 'Reebok',         logo: logoReebok      },
+  { name: 'Asics',          logo: logoAsics       },
+  { name: 'The North Face', logo: logoNorthFace   },
+  { name: 'Fila',           logo: logoFila        },
+  { name: 'Nike',           logo: logoNike        },
+  { name: 'Adidas',         logo: logoAdidas      },
+  { name: 'Puma',           logo: logoPuma        },
+  { name: 'Under Armour',   logo: logoUnderArmour },
+  { name: 'New Balance',    logo: logoNewBalance  },
+  { name: 'Reebok',         logo: logoReebok      },
+  { name: 'Asics',          logo: logoAsics       },
+  { name: 'The North Face', logo: logoNorthFace   },
+  { name: 'Fila',           logo: logoFila        },
 ];
 
 // ── Category card data ─────────────────────────────────────────────────────

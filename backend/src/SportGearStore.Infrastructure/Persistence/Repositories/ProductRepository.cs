@@ -88,6 +88,15 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
                 .ThenInclude(r => r.User)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
 
+    public async Task<Product?> GetDetailBySlugAsync(string slug, CancellationToken cancellationToken = default)
+        => await _context.Products
+            .Include(p => p.Category)
+            .Include(p => p.Images)
+            .Include(p => p.Variants)
+            .Include(p => p.Reviews.Where(r => r.IsApproved))
+                .ThenInclude(r => r.User)
+            .FirstOrDefaultAsync(p => p.Slug == slug && p.IsActive, cancellationToken);
+
     public async Task<bool> SlugExistsAsync(string slug, Guid? excludeId = null, CancellationToken cancellationToken = default)
         => await _context.Products.AnyAsync(p =>
             p.Slug == slug && (excludeId == null || p.Id != excludeId.Value),
