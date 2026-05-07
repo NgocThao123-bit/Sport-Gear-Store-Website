@@ -35,6 +35,11 @@ import stkBaseball    from '../assets/images/stickers/baseball.png';
 import stkGoogles     from '../assets/images/stickers/googles.png';
 import stkDumbbell       from '../assets/images/stickers/dumbbell.png';
 import stkSkateboard     from '../assets/images/stickers/skateboard.png';
+import stkScribble       from '../assets/images/stickers/scribble (1).png';
+import stkBrushStroke    from '../assets/images/stickers/pastel-brush-stroke.png';
+import stkRollerSkates   from '../assets/images/stickers/roller-skates.png';
+import stkShuttlecock    from '../assets/images/stickers/shuttlecock.png';
+import stkStarDoodle     from '../assets/images/stickers/star.png';
 import stkBasketballBall from '../assets/images/stickers/basketball-ball.png';
 
 // ── Marquee data ──────────────────────────────────────────────────────────────
@@ -113,50 +118,65 @@ function Sticker({ delay = 1.0, rotate = 0, className = '', style = {}, children
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// PRODUCT CARD — sticker aesthetic
+// PRODUCT CARD — editorial grain-texture style
 // ════════════════════════════════════════════════════════════════════════════
+const GRAIN_BG = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.09'/%3E%3C/svg%3E")`;
+
 function ProductCard({ product }) {
   const addItem = useCartStore((s) => s.addItem);
+  const price   = (product.salePrice ?? product.price)?.toFixed(2);
   return (
     <motion.div
-      className="group relative bg-white rounded-lg overflow-visible border border-brand-outline/30 flex flex-col"
-      whileHover={{ y: -6, boxShadow: '0 20px 40px rgba(0,0,0,0.10)' }}
+      className="group relative rounded-[28px] overflow-hidden flex flex-col h-full"
+      style={{ backgroundColor: '#EBEBEB', backgroundImage: GRAIN_BG }}
+      whileHover={{ y: -8 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
     >
-      <div className="relative overflow-hidden h-56 rounded-t-lg bg-brand-surface">
+      {/* Lime category badge */}
+      {product.categoryName && (
+        <span className="absolute top-4 left-4 z-10 bg-brand-lime text-brand-ink font-sketch text-[9px] font-bold px-3 py-1 rounded-full tracking-widest uppercase -rotate-2 shadow-sm">
+          {product.categoryName}
+        </span>
+      )}
+
+      {/* Product image — white sticker cutout glow */}
+      <div className="relative h-96 w-full px-4 pt-4">
         {product.mainImageUrl ? (
           <img
             src={product.mainImageUrl}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            style={{ mixBlendMode: 'multiply' }}
+            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+            style={{ filter: 'drop-shadow(0 0 8px white) drop-shadow(0 0 22px white) drop-shadow(0 0 2px rgba(0,0,0,0.08))' }}
+            draggable={false}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="text-5xl">🏅</span>
-          </div>
-        )}
-        {product.categoryName && (
-          <span className="absolute top-3 left-3 bg-brand-lime text-brand-ink font-sketch text-[9px] font-bold px-2.5 py-1 rounded-full tracking-widest uppercase -rotate-2 shadow-sm">
-            {product.categoryName}
-          </span>
+          <span className="text-5xl">🏅</span>
         )}
       </div>
-      <div className="p-4 flex flex-col gap-3 flex-1">
-        <p className="font-sketch text-[9px] font-bold tracking-widest uppercase text-brand-ink/30">
+
+      {/* Text + CTA */}
+      <div className="px-5 pb-6 pt-3 flex flex-col gap-1.5 flex-1">
+        <p className="font-sketch text-[9px] font-bold tracking-widest uppercase text-brand-ink/35">
           {product.brandName ?? 'SportGear'}
         </p>
-        <h3 className="font-sans font-semibold text-brand-ink text-sm leading-snug line-clamp-2 flex-1">
+        <h3
+          className="font-display font-black text-brand-ink leading-tight line-clamp-2 flex-1"
+          style={{ fontSize: 'clamp(16px, 2.2vw, 20px)', letterSpacing: '-0.02em' }}
+        >
           {product.name}
         </h3>
-        <div className="flex items-center justify-between gap-2">
-          <span className="font-display text-2xl font-black text-brand-ink" style={{ letterSpacing: '-0.04em' }}>
-            ${(product.salePrice ?? product.price)?.toFixed(2)}
+        <div className="flex items-center justify-between gap-3 mt-2">
+          <span
+            className="font-display font-black text-brand-ink"
+            style={{ fontSize: 'clamp(24px, 3.5vw, 32px)', letterSpacing: '-0.04em' }}
+          >
+            ${price}
           </span>
           <motion.button
             onClick={() => addItem(product.id, null, 1)}
-            className="px-4 py-2 bg-brand-ink text-brand-cream font-sketch text-[10px] font-bold rounded-full tracking-widest uppercase"
-            whileHover={{ backgroundColor: '#635499', scale: 1.04 }}
+            className="px-4 py-2.5 bg-brand-ink text-brand-cream font-sketch text-[10px] font-bold rounded-full tracking-widest uppercase"
+            style={{ boxShadow: '4px 4px 12px rgba(0,0,0,0.28), -2px -2px 6px rgba(255,255,255,0.14)' }}
+            whileHover={{ scale: 1.04, backgroundColor: '#2d2d2d' }}
             whileTap={{ scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           >
@@ -555,39 +575,93 @@ export default function Home() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════
-          SECTION 4 — FEATURED PRODUCTS
+          SECTION 4 — FEATURED PRODUCTS  (editorial grain-texture)
           ══════════════════════════════════════════════════════════ */}
-      <section className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16 pb-24">
-        <div className="flex items-end justify-between mb-12">
+      <section className="relative max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16 pb-28 overflow-visible">
+
+
+        {/* Section header */}
+        <div className="flex items-end justify-between mb-4">
           <div>
-            <p className="font-serif italic text-brand-ink/45 text-lg mb-1">just dropped</p>
-            <h2 className="font-display font-black text-5xl text-brand-ink leading-none" style={{ letterSpacing: '-0.03em' }}>
-              NEW ARRIVALS
-            </h2>
+            <p className="font-note italic text-brand-ink/50 text-xl leading-none mb-0">just dropped</p>
+            <div className="relative inline-block">
+              <h2
+                className="font-display font-black text-brand-ink uppercase leading-none"
+                style={{ fontSize: 'clamp(52px, 9vw, 120px)', letterSpacing: '-0.03em' }}
+              >
+                NEW ARRIVALS
+              </h2>
+              {/* Brush stroke — bottom-right of the "S" */}
+              <img
+                src={stkBrushStroke} alt=""
+                className="absolute -bottom-5 -right-[4.5rem] w-40 h-14 object-contain pointer-events-none select-none opacity-80"
+                draggable={false}
+              />
+            </div>
           </div>
-          <Link to="/products" className="font-sketch text-[11px] font-bold tracking-[0.22em] uppercase text-brand-ink/40 hover:text-brand-ink transition-colors">
+          <Link
+            to="/products"
+            className="font-sketch text-[11px] font-bold tracking-[0.22em] uppercase text-brand-ink/40 hover:text-brand-ink transition-colors mb-3"
+          >
             View all →
           </Link>
         </div>
+
+        {/* Star doodle between header and card grid */}
+        <div className="flex items-center gap-3 mb-8">
+          <img
+            src={stkStarDoodle} alt=""
+            className="w-10 h-10 object-contain opacity-50"
+            style={{ transform: 'rotate(25deg)' }}
+            draggable={false}
+          />
+          <div className="flex-1 h-px bg-brand-outline/40" />
+        </div>
+
         {loading ? (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-brand-surface rounded-lg h-72 animate-pulse" />
+              <div key={i} className="bg-[#EBEBEB] rounded-[28px] h-80 animate-pulse" />
             ))}
           </div>
         ) : featured.length > 0 ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="relative grid grid-cols-2 lg:grid-cols-4 gap-5">
             {featured.map((p, i) => (
               <motion.div
                 key={p.id}
+                className="relative h-full"
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, ease: 'easeOut', delay: i * 0.08 }}
               >
                 <ProductCard product={p} />
+                {i === 0 && (
+                  <img
+                    src={stkRollerSkates} alt=""
+                    className="absolute -bottom-16 -left-24 w-56 h-56 object-contain pointer-events-none select-none z-10"
+                    style={{ filter: 'drop-shadow(2px 4px 8px rgba(0,0,0,0.18))' }}
+                    draggable={false}
+                  />
+                )}
+                {i === featured.length - 1 && (
+                  <img
+                    src={stkShuttlecock} alt=""
+                    className="absolute -top-10 -right-10 w-28 h-28 object-contain pointer-events-none select-none z-10"
+                    style={{ transform: 'rotate(20deg)', filter: 'drop-shadow(2px 4px 8px rgba(0,0,0,0.18))' }}
+                    draggable={false}
+                  />
+                )}
               </motion.div>
             ))}
+
+            {/* Scribble doodle — bottom-right of card grid */}
+            <img
+              src={stkScribble} alt=""
+              className="hidden lg:block absolute -bottom-12 -right-6 w-24 h-24 object-contain pointer-events-none select-none opacity-45"
+              style={{ transform: 'rotate(10deg)' }}
+              draggable={false}
+            />
           </div>
         ) : (
           <div className="text-center py-20 text-brand-ink/30">
