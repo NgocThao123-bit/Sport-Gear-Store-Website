@@ -25,14 +25,17 @@ import logoFila        from '../assets/images/logos/fila.png';
 
 // ── Sticker PNG imports ───────────────────────────────────────────────────────
 import stkBasketball  from '../assets/images/stickers/basketball.png';
-import stkBaseball    from '../assets/images/stickers/baseball.png';
 import stkShining     from '../assets/images/stickers/shining.png';
 import stkDoodleStar  from '../assets/images/stickers/doodle-star-purple.png';
 import stkDoodleCute  from '../assets/images/stickers/doodle-cute-element.png';
 import stkMedal       from '../assets/images/stickers/medal.png';
 import stkBadminton   from '../assets/images/stickers/badminton.png';
 import stkNikeSneaker from '../assets/images/stickers/nike-sneaker1.png';
+import stkBaseball    from '../assets/images/stickers/baseball.png';
 import stkGoogles     from '../assets/images/stickers/googles.png';
+import stkDumbbell       from '../assets/images/stickers/dumbbell.png';
+import stkSkateboard     from '../assets/images/stickers/skateboard.png';
+import stkBasketballBall from '../assets/images/stickers/basketball-ball.png';
 
 // ── Marquee data ──────────────────────────────────────────────────────────────
 const BRANDS = [
@@ -56,12 +59,6 @@ const BRANDS = [
   { name: 'Fila',           logo: logoFila        },
 ];
 
-// ── Category cards ────────────────────────────────────────────────────────────
-const CATEGORIES = [
-  { label: 'Clothing',  sub: 'Jerseys, shorts & jackets', slug: 'clothing',  img: imgClothing,  bg: 'bg-brand-lime',         text: 'text-brand-ink', btn: 'bg-brand-ink text-brand-cream' },
-  { label: 'Footwear',  sub: 'Running, football & more',  slug: 'footwear',  img: imgFootwear,  bg: 'bg-brand-purple-light', text: 'text-brand-ink', btn: 'bg-brand-ink text-brand-cream' },
-  { label: 'Equipment', sub: 'Rackets, balls & gear',     slug: 'equipment', img: imgEquipment, bg: 'bg-brand-blue-light',   text: 'text-brand-ink', btn: 'bg-brand-ink text-brand-cream' },
-];
 
 // ════════════════════════════════════════════════════════════════════════════
 // MOTION VARIANTS
@@ -192,7 +189,7 @@ export default function Home() {
           SECTION 1 — HERO
           Full-viewport collage: oversized type + athlete + stickers
           ══════════════════════════════════════════════════════════ */}
-      <section className="relative h-screen overflow-hidden bg-gradient-to-br from-[#9BDCFD] via-brand-cream to-[#C3B2FF]">
+      <section className="relative h-screen overflow-hidden hero-zine-bg">
 
         {/* Atmospheric glow orbs */}
         <div className="absolute top-[12%] right-[8%]  w-[480px] h-[480px] rounded-full bg-sky-200/20  blur-[100px] pointer-events-none" />
@@ -204,7 +201,7 @@ export default function Home() {
           {/* Line 1 — NEW ERA */}
           <div className="overflow-hidden w-full">
             <motion.h1
-              className="block w-full bg-brand-lime text-brand-ink font-display font-black leading-[0.85] py-2 pl-5 md:pl-10 lg:pl-16 uppercase"
+              className="block w-full bg-brand-lime text-brand-ink font-display font-black leading-[0.85] pt-12 pb-1 pl-5 md:pl-10 lg:pl-16 uppercase"
               style={{ fontSize: 'clamp(64px, 20vw, 288px)', letterSpacing: '-0.04em' }}
               variants={LINE1}
               initial="hidden"
@@ -314,7 +311,7 @@ export default function Home() {
 
         {/* ── BOTTOM-LEFT ──────────────────────────────────────────── */}
 
-        {/* Baseball sticker */}
+        {/* Baseball — bottom-left */}
         <Sticker delay={1.4} rotate={-8} className="top-[50%] left-[2%]">
           <img src={stkBaseball} alt="baseball" className="w-24 h-24 object-contain drop-shadow-md" draggable={false} />
         </Sticker>
@@ -341,69 +338,219 @@ export default function Home() {
       <section className="bg-brand-cream py-5 overflow-hidden border-y border-brand-outline/40">
         <div className="flex animate-marquee whitespace-nowrap">
           {BRANDS.map((b, i) => (
-            <span key={i} className="inline-flex items-center gap-3 mx-8">
+            <span key={i} className="inline-flex items-center mx-6">
               <img
                 src={b.logo}
                 alt={b.name}
-                className="h-6 w-auto object-contain grayscale opacity-40"
+                className="h-16 w-48 object-contain opacity-75"
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
               />
-              <span className="font-sketch text-sm font-bold text-brand-ink/35 tracking-widest uppercase">
-                {b.name}
-              </span>
-              <span className="text-brand-outline mx-2">·</span>
             </span>
           ))}
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════════
-          SECTION 3 — CATEGORIES
+          SECTION 3 — CATEGORIES (Sticker card layout)
           ══════════════════════════════════════════════════════════ */}
-      <section className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16 py-24">
-        <div className="flex items-end justify-between mb-12">
-          <div>
-            <p className="font-serif italic text-brand-ink/45 text-lg mb-1">explore the</p>
-            <h2 className="font-display font-black text-5xl text-brand-ink leading-none" style={{ letterSpacing: '-0.03em' }}>
-              CATEGORIES
+      <section className="py-20 overflow-hidden">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16">
+
+          {/* Section header */}
+          <div className="mb-14">
+            <h2
+              className="font-display font-black uppercase leading-none text-brand-ink"
+              style={{ fontSize: 'clamp(44px, 7vw, 88px)', letterSpacing: '-0.02em' }}
+            >
+              SHOP BY CATEGORY
             </h2>
+            <p className="font-sketch text-brand-ink/55 text-xl mt-2">Find your fit. Express your style.</p>
           </div>
-          <Link to="/products" className="font-sketch text-[11px] font-bold tracking-[0.22em] uppercase text-brand-ink/40 hover:text-brand-ink transition-colors">
-            See all →
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {CATEGORIES.map((cat, i) => (
+
+          {/* Sticker cards — overlapping on md+ */}
+          <div className="relative flex flex-col md:flex-row items-start justify-center gap-6 md:gap-0 pb-10">
+
+            {/* ── FOOTWEAR card ── lime green, CCW tilt, front-left */}
             <motion.div
-              key={cat.slug}
-              initial={{ opacity: 0, y: 30 }}
+              className="relative w-full md:w-[380px] flex-shrink-0 rounded-[36px] p-7 shadow-2xl md:-mr-4 z-10 cursor-pointer"
+              style={{ backgroundColor: '#BEFF55', rotate: -3 }}
+              whileHover={{ rotate: 0, scale: 1.03, zIndex: 30 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.55, ease: 'easeOut', delay: i * 0.1 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0 }}
             >
-              <Link
-                to={`/products?category=${cat.slug}`}
-                className={`${cat.bg} ${cat.text} rounded-lg p-8 flex flex-col min-h-[400px] group overflow-hidden shadow-sm`}
-              >
-                <span className="font-display font-black text-4xl leading-none uppercase" style={{ letterSpacing: '-0.03em' }}>
-                  {cat.label}
-                </span>
-                <span className="font-serif italic text-sm opacity-50 mt-2">{cat.sub}</span>
-                <div className="flex-1 flex items-end justify-center py-4">
-                  <motion.img
-                    src={cat.img}
-                    alt={cat.label}
-                    className="w-48 h-48 object-contain drop-shadow-xl"
-                    whileHover={{ scale: 1.1, rotate: -3 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-                  />
+              {/* Dumbbell sticker — floats outside top-left corner */}
+              <img
+                src={stkDumbbell} alt=""
+                className="absolute -top-10 -left-10 w-24 h-24 object-contain pointer-events-none select-none"
+                style={{ transform: 'rotate(-20deg)', filter: 'drop-shadow(2px 4px 8px rgba(0,0,0,0.18))' }}
+                draggable={false}
+              />
+
+              <h3
+                className="font-display font-black text-brand-ink uppercase leading-none"
+                style={{ fontSize: 'clamp(36px, 5vw, 56px)', letterSpacing: '-0.02em' }}
+              >FOOTWEAR</h3>
+
+              {/* Product image + annotation labels */}
+              <div className="relative my-6 h-52 flex items-center justify-center">
+                <img
+                  src={imgFootwear} alt="Footwear"
+                  className="w-52 h-44 object-contain relative z-10"
+                  style={{ filter: 'drop-shadow(0 0 5px white) drop-shadow(0 0 14px white) drop-shadow(0 0 2px rgba(0,0,0,0.10))' }}
+                  draggable={false}
+                />
+                <div className="absolute top-1 left-1 font-note text-[13px] text-brand-ink/75 leading-tight">
+                  Performance<br/>Fabric
+                  <svg className="w-9 h-9 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M4 4 Q12 8 18 16"/><path d="M16 18 L18 16 L14 15"/></svg>
                 </div>
-                <span className={`inline-block ${cat.btn} font-sketch text-[10px] font-bold tracking-[0.22em] uppercase px-6 py-2.5 rounded-full w-fit`}>
-                  SHOP
-                </span>
+                <div className="absolute top-1 right-1 font-note text-[13px] text-brand-ink/75 text-right leading-tight">
+                  Durable
+                  <svg className="w-9 h-9 mt-1 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ transform: 'scaleX(-1)' }}><path d="M4 4 Q12 8 18 16"/><path d="M16 18 L18 16 L14 15"/></svg>
+                </div>
+                <div className="absolute bottom-1 left-1 font-note text-[13px] text-brand-ink/75 leading-tight">
+                  <svg className="w-9 h-9 mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ transform: 'scaleY(-1)' }}><path d="M4 4 Q12 8 18 16"/><path d="M16 18 L18 16 L14 15"/></svg>
+                  Grippy<br/>Sole
+                </div>
+                <div className="absolute bottom-1 right-1 font-note text-[13px] text-brand-ink/75 text-right leading-tight">
+                  <svg className="w-9 h-9 mb-1 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ transform: 'rotate(180deg)' }}><path d="M4 4 Q12 8 18 16"/><path d="M16 18 L18 16 L14 15"/></svg>
+                  Grippy<br/>Sole
+                </div>
+              </div>
+
+              {/* Neumorphic pill button */}
+              <Link
+                to="/products?category=footwear"
+                className="block w-full text-center py-3 rounded-full font-sketch text-[15px] text-brand-ink font-bold transition-opacity hover:opacity-80"
+                style={{
+                  background: 'rgba(255,255,255,0.70)',
+                  boxShadow: '4px 4px 14px rgba(0,0,0,0.10), -3px -3px 8px rgba(255,255,255,0.90)',
+                }}
+              >
+                Shop Footwear
               </Link>
             </motion.div>
-          ))}
+
+            {/* ── EQUIPMENT card ── sky blue, CW tilt, center — overlaps both neighbors */}
+            <motion.div
+              className="relative w-full md:w-[410px] flex-shrink-0 rounded-[36px] p-7 shadow-2xl md:mt-16 z-20 cursor-pointer"
+              style={{ backgroundColor: '#A8DCFF', rotate: 1.5 }}
+              whileHover={{ rotate: 0, scale: 1.03, zIndex: 30 }}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.1 }}
+            >
+              <h3
+                className="font-display font-black text-brand-ink uppercase leading-none"
+                style={{ fontSize: 'clamp(36px, 5vw, 52px)', letterSpacing: '-0.02em' }}
+              >EQUIPMENT</h3>
+
+              <div className="relative my-6 h-52 flex items-center justify-center">
+                <img
+                  src={imgEquipment} alt="Equipment"
+                  className="w-52 h-44 object-contain relative z-10"
+                  style={{ filter: 'drop-shadow(0 0 5px white) drop-shadow(0 0 14px white) drop-shadow(0 0 2px rgba(0,0,0,0.10))' }}
+                  draggable={false}
+                />
+                <div className="absolute top-1 left-1 font-note text-[13px] text-brand-ink/75 leading-tight">
+                  Weight<br/>Set
+                  <svg className="w-9 h-9 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M4 4 Q12 8 18 16"/><path d="M16 18 L18 16 L14 15"/></svg>
+                </div>
+                <div className="absolute top-1 right-1 font-note text-[13px] text-brand-ink/75 text-right leading-tight">
+                  Water<br/>Resistant
+                  <svg className="w-9 h-9 mt-1 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ transform: 'scaleX(-1)' }}><path d="M4 4 Q12 8 18 16"/><path d="M16 18 L18 16 L14 15"/></svg>
+                </div>
+                <div className="absolute bottom-1 left-1 font-note text-[13px] text-brand-ink/75 leading-tight">
+                  <svg className="w-9 h-9 mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ transform: 'scaleY(-1)' }}><path d="M4 4 Q12 8 18 16"/><path d="M16 18 L18 16 L14 15"/></svg>
+                  Official<br/>Ball
+                </div>
+              </div>
+
+              <Link
+                to="/products?category=equipment"
+                className="block w-full text-center py-3 rounded-full font-sketch text-[15px] text-brand-ink font-bold transition-opacity hover:opacity-80"
+                style={{
+                  background: 'rgba(255,255,255,0.70)',
+                  boxShadow: '4px 4px 14px rgba(0,0,0,0.10), -3px -3px 8px rgba(255,255,255,0.90)',
+                }}
+              >
+                Shop Equipment
+              </Link>
+
+              {/* Skateboard sticker — bottom-right corner */}
+              <img
+                src={stkSkateboard} alt=""
+                className="absolute -bottom-12 -right-10 w-36 h-36 object-contain pointer-events-none select-none"
+                style={{ transform: 'rotate(-20deg)', filter: 'drop-shadow(2px 4px 8px rgba(0,0,0,0.18))' }}
+                draggable={false}
+              />
+            </motion.div>
+
+            {/* ── CLOTHING card ── lavender, CW tilt, top-right */}
+            <motion.div
+              className="relative w-full md:w-[380px] flex-shrink-0 rounded-[36px] p-7 shadow-2xl md:-ml-4 md:-mt-5 z-10 cursor-pointer"
+              style={{ backgroundColor: '#C4A8FF', rotate: 2 }}
+              whileHover={{ rotate: 0, scale: 1.03, zIndex: 30 }}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.2 }}
+            >
+              {/* Basketball-ball sticker — top-right corner */}
+              <img
+                src={stkBasketballBall} alt=""
+                className="absolute -top-10 -right-8 w-28 h-28 object-contain pointer-events-none select-none"
+                style={{ transform: 'rotate(15deg)', filter: 'drop-shadow(2px 4px 8px rgba(0,0,0,0.18))' }}
+                draggable={false}
+              />
+
+              <h3
+                className="font-display font-black text-brand-ink uppercase leading-none"
+                style={{ fontSize: 'clamp(36px, 5vw, 56px)', letterSpacing: '-0.02em' }}
+              >CLOTHING</h3>
+
+              <div className="relative my-6 h-52 flex items-center justify-center">
+                <img
+                  src={imgClothing} alt="Clothing"
+                  className="w-52 h-44 object-contain relative z-10"
+                  style={{ filter: 'drop-shadow(0 0 5px white) drop-shadow(0 0 14px white) drop-shadow(0 0 2px rgba(0,0,0,0.10))' }}
+                  draggable={false}
+                />
+                <div className="absolute top-1 left-1 font-note text-[13px] text-brand-ink/75 leading-tight">
+                  Performance<br/>Fabric
+                  <svg className="w-9 h-9 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M4 4 Q12 8 18 16"/><path d="M16 18 L18 16 L14 15"/></svg>
+                </div>
+                <div className="absolute top-1 right-1 font-note text-[13px] text-brand-ink/75 text-right leading-tight">
+                  Backpack
+                  <svg className="w-9 h-9 mt-1 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ transform: 'scaleX(-1)' }}><path d="M4 4 Q12 8 18 16"/><path d="M16 18 L18 16 L14 15"/></svg>
+                </div>
+                <div className="absolute bottom-1 right-1 font-note text-[13px] text-brand-ink/75 text-right leading-tight">
+                  <svg className="w-9 h-9 mb-1 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ transform: 'rotate(180deg)' }}><path d="M4 4 Q12 8 18 16"/><path d="M16 18 L18 16 L14 15"/></svg>
+                  Water<br/>Resistant
+                </div>
+              </div>
+
+              <Link
+                to="/products?category=clothing"
+                className="block w-full text-center py-3 rounded-full font-sketch text-[15px] text-brand-ink font-bold transition-opacity hover:opacity-80"
+                style={{
+                  background: 'rgba(255,255,255,0.70)',
+                  boxShadow: '4px 4px 14px rgba(0,0,0,0.10), -3px -3px 8px rgba(255,255,255,0.90)',
+                }}
+              >
+                Shop Clothing
+              </Link>
+            </motion.div>
+
+            {/* ── Doodle stars between Footwear & Equipment ── */}
+            <div className="hidden md:block absolute left-[30%] top-[18%] pointer-events-none select-none text-brand-ink/20 text-3xl">✦</div>
+            <div className="hidden md:block absolute left-[32%] top-[34%] pointer-events-none select-none text-brand-ink/12 text-xl">✦</div>
+            <div className="hidden md:block absolute left-[31%] top-[50%] pointer-events-none select-none text-brand-ink/18 text-2xl">✦</div>
+
+          </div>
+
         </div>
       </section>
 

@@ -29,6 +29,8 @@ export default {
         sans:    ['"Be Vietnam Pro"', 'sans-serif'],
         // Space Grotesk: geometric utility layer — labels, nav, pricing
         sketch:  ['"Space Grotesk"',  'sans-serif'],
+        // Kalam: handwriting scrapbook font — annotation labels on cards
+        note:    ['"Kalam"',          'cursive'],
       },
       keyframes: {
         marquee: {
