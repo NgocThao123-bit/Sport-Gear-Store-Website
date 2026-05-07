@@ -2,8 +2,8 @@
 // Footer.jsx — phần chân trang với thông tin thương hiệu + links
 //
 // DESIGN / THIẾT KẾ:
-// Dark ink background (#0A0A0A) with lime accent — contrasts the cream body
-// Nền đen đậm (#0A0A0A) với điểm nhấn màu lime — tương phản với nền cream
+// Dark ink background (#222815) with lime accent — contrasts the cream body
+// Nền đen đậm (#222815) với điểm nhấn màu lime — tương phản với nền cream
 import { Link } from 'react-router-dom';
 
 // Quick link section data — makes the JSX shorter

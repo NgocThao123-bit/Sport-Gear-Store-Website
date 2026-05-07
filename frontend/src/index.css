@@ -1,5 +1,9 @@
-/* ── Google Fonts ─────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=Caveat:wght@700&display=swap');
+/* ── Google Fonts — Sport-Zine stack ─────────────────────── */
+/* Epilogue: hero headlines 700/800/900                       */
+/* Newsreader: editorial italic accent                        */
+/* Be Vietnam Pro: friendly body copy                         */
+/* Space Grotesk: geometric utility — nav, labels, pricing    */
+@import url('https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&family=Newsreader:ital,wght@1,400;1,600&family=Be+Vietnam+Pro:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 /* ── Tailwind layers ──────────────────────────────────────── */
 @tailwind base;
@@ -10,35 +14,66 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: #F8F8F4;
-  color: #0A0A0A;
-  font-family: 'Space Grotesk', sans-serif;
+  background: #fcf9f8;
+  color: #1c1b1b;
+  font-family: 'Be Vietnam Pro', sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── Custom scrollbar ─────────────────────────────────────── */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: #F0F0EA; }
-::-webkit-scrollbar-thumb { background: #9B5CF6; border-radius: 3px; }
-
-/* ── Reusable CSS vars ────────────────────────────────────── */
-:root {
-  --lime:   #C8FF00;
-  --purple: #9B5CF6;
-  --blue:   #38BCFF;
-  --black:  #0A0A0A;
-  --cream:  #F8F8F4;
+/* ── Global grain overlay — "paper-tooth" Zine-Core feel ─── */
+/* SVG feTurbulence at 0.025 opacity gives printed-paper look */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.025;
 }
 
-/* ── Floating ball animation ──────────────────────────────── */
-/* Each FloatingBall component sets --dur, --delay, --rotate   */
-/* as inline CSS variables. This single keyframe drives all    */
-/* ball instances with different timings via those variables.  */
-/*                                                             */
-/* Mỗi FloatingBall đặt --dur, --delay, --rotate              */
-/* như biến CSS inline. Keyframe này điều khiển tất cả         */
-/* các instance bóng với thời gian khác nhau qua các biến đó. */
+/* ── Custom scrollbar ─────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #f0edec; }
+::-webkit-scrollbar-thumb { background: #635499; border-radius: 3px; }
+
+/* ── CSS custom properties (Sport-Zine tokens) ────────────── */
+:root {
+  --lime:    #d4ff32;
+  --purple:  #635499;
+  --blue:    #1a6682;
+  --ink:     #1c1b1b;
+  --cream:   #fcf9f8;
+  --danger:  #ba1a1a;
+}
+
+/* ── Hero entrance animations ─────────────────────────────── */
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-110px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(110px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(44px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Sticker pop — scale + rotate spring, starts invisible */
+@keyframes stickerPop {
+  0%   { opacity: 0; transform: scale(0.25) rotate(-20deg); }
+  65%  { transform: scale(1.14) rotate(5deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+/* Gentle infinite float for sticker elements */
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%       { transform: translateY(-8px) rotate(2deg); }
+}
+
+/* ── Floating ball animation (legacy hero balls) ──────────── */
 @keyframes floatBall {
   0%   { transform: translateY(0px)   rotate(0deg); }
   50%  { transform: translateY(-22px) rotate(calc(var(--rotate, 15deg) * 0.5)); }

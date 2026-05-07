@@ -1,120 +1,104 @@
-// Navbar.jsx — sticky top navigation bar
-// Navbar.jsx — thanh điều hướng cố định trên cùng
-//
-// WHAT IT DOES / CHỨC NĂNG:
-// - Shows logo + nav links + cart badge + auth buttons
-// - Hiển thị logo + link điều hướng + badge giỏ hàng + nút đăng nhập
-//
-// HOW IT READS GLOBAL STATE / CÁCH ĐỌC STATE TOÀN CỤC:
-// We call useAuthStore() and useCartStore() — Zustand hooks.
-// They return the current state + actions without any Provider wrapper.
-// Chúng ta gọi useAuthStore() và useCartStore() — Zustand hooks.
-// Chúng trả về state hiện tại + actions mà không cần Provider wrapper.
+// Navbar.jsx — minimal editorial nav (NEOGEN / Sport-Zine style)
+// Logo left | Category links center | Cart + Auth right
+// Font: Space Grotesk (font-sketch) for all labels — geometric utility layer
 import { useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import useAuthStore from '../../store/useAuthStore';
 import useCartStore from '../../store/useCartStore';
 
 export default function Navbar() {
-  const { user, logout }    = useAuthStore();
-  const itemCount           = useCartStore((s) => s.itemCount());
-  const navigate            = useNavigate();
+  const { user, logout }        = useAuthStore();
+  const itemCount               = useCartStore((s) => s.itemCount());
+  const navigate                = useNavigate();
+  const { pathname, search }    = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // logout then redirect to home
-  // Đăng xuất rồi chuyển về trang chủ
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
+  const handleLogout = () => { logout(); navigate('/'); };
 
-  // NavLink className helper — active link gets lime underline
-  // Hàm helper cho NavLink — link đang active sẽ có gạch chân màu lime
-  const linkClass = ({ isActive }) =>
-    `text-sm font-bold tracking-widest uppercase transition-colors ${
-      isActive ? 'text-brand-lime' : 'text-brand-ink hover:text-brand-purple'
+  // Highlights the category link whose query param matches the current URL
+  const activeCat = new URLSearchParams(search).get('category');
+  const catClass  = (cat) =>
+    `font-sketch text-[11px] font-bold tracking-[0.22em] uppercase transition-colors ${
+      activeCat === cat
+        ? 'text-brand-ink'
+        : 'text-brand-ink/40 hover:text-brand-ink'
     }`;
+  const linkCls = 'font-sketch text-[11px] font-bold tracking-[0.22em] uppercase transition-colors text-brand-ink/40 hover:text-brand-ink';
 
   return (
-    // sticky — stays at top while scrolling
-    // backdrop-blur — frosted glass effect when content scrolls behind it
-    // sticky — giữ nguyên vị trí khi cuộn
-    // backdrop-blur — hiệu ứng kính mờ khi nội dung cuộn phía sau
-    <nav className="sticky top-0 z-50 bg-brand-cream/90 backdrop-blur-md border-b-2 border-brand-ink">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <nav className="sticky top-0 z-50 bg-brand-cream/96 backdrop-blur-sm border-b border-brand-outline/25">
+      <div className="max-w-screen-xl mx-auto px-6 lg:px-16">
+        <div className="flex items-center justify-between h-[72px]">
 
-          {/* ── Logo ───────────────────────────────────────────── */}
-          <Link to="/" className="flex items-center gap-2">
-            {/* Colored dot accent / Dấu chấm màu accent */}
-            <span className="w-3 h-3 rounded-full bg-brand-lime inline-block" />
-            <span className="font-display text-2xl tracking-widest text-brand-ink">
-              SPORT<span className="text-brand-purple">GEAR</span>
+          {/* ── Logo ────────────────────────────────────────── */}
+          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
+            {/* Zigzag / wave mark */}
+            <svg width="22" height="18" viewBox="0 0 22 18" fill="none" className="text-brand-ink">
+              <path
+                d="M1 9 L5 2 L11 16 L17 2 L21 9"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="font-display text-[17px] font-black tracking-[0.18em] text-brand-ink leading-none">
+              SPORTGEAR
             </span>
           </Link>
 
-          {/* ── Desktop Nav Links ──────────────────────────────── */}
-          <div className="hidden md:flex items-center gap-8">
-            <NavLink to="/"         className={linkClass} end>Home</NavLink>
-            <NavLink to="/products" className={linkClass}>Shop</NavLink>
-            {/* My Orders — only for logged-in customers (not admin) */}
-            {user && !user.isAdmin && (
-              <NavLink to="/orders" className={linkClass}>My Orders</NavLink>
-            )}
-            {/* Show admin link only when logged-in user is Admin */}
+          {/* ── Desktop center: category links ──────────────── */}
+          <div className="hidden md:flex items-center gap-12">
+            <Link to="/products?category=clothing"  className={catClass('clothing')}>Clothing</Link>
+            <Link to="/products?category=footwear"  className={catClass('footwear')}>Footwear</Link>
+            <Link to="/products?category=equipment" className={catClass('equipment')}>Equipment</Link>
             {user?.isAdmin && (
-              <NavLink to="/admin" className={linkClass}>Admin</NavLink>
+              <Link
+                to="/admin"
+                className={`font-sketch text-[11px] font-bold tracking-[0.22em] uppercase transition-colors ${pathname.startsWith('/admin') ? 'text-brand-ink' : 'text-brand-ink/40 hover:text-brand-ink'}`}
+              >
+                Admin
+              </Link>
             )}
           </div>
 
-          {/* ── Right Side: Cart + Auth ────────────────────────── */}
-          <div className="hidden md:flex items-center gap-4">
+          {/* ── Desktop right: Cart + Auth ───────────────────── */}
+          <div className="hidden md:flex items-center gap-7">
 
-            {/* Cart icon with item count badge */}
-            {/* Icon giỏ hàng với badge số lượng sản phẩm */}
-            <Link to="/cart" className="relative p-2 text-brand-ink hover:text-brand-purple transition-colors">
-              {/* Simple bag SVG icon */}
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {/* Cart */}
+            <Link to="/cart" className={linkCls + ' flex items-center gap-1.5'}>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                   d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
-              {/* Badge — only shown when cart has items */}
-              {/* Badge — chỉ hiển thị khi giỏ hàng có sản phẩm */}
+              <span>Cart</span>
               {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-brand-purple text-white text-xs font-bold rounded-full flex items-center justify-center">
-                  {itemCount > 99 ? '99+' : itemCount}
-                </span>
+                <span className="ml-0.5 text-brand-purple">({itemCount})</span>
               )}
             </Link>
 
-            {/* Auth: show username + logout OR sign-in button */}
-            {/* Auth: hiển thị tên người dùng + đăng xuất HOẶC nút đăng nhập */}
+            {/* Auth state */}
             {user ? (
-              <div className="flex items-center gap-3">
-                <Link
-                  to="/profile"
-                  className="text-xs font-bold text-brand-ink/60 tracking-wide hover:text-brand-purple transition-colors"
-                >
+              <div className="flex items-center gap-5">
+                {!user.isAdmin && (
+                  <Link to="/orders" className={linkCls}>Orders</Link>
+                )}
+                <Link to="/profile" className={linkCls}>
                   {user.email.split('@')[0]}
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="px-4 py-2 text-xs font-bold tracking-widest uppercase bg-brand-ink text-brand-cream rounded-full hover:bg-brand-purple transition-colors"
+                  className="font-sketch text-[11px] font-bold tracking-[0.22em] uppercase text-brand-ink/25 hover:text-brand-danger transition-colors"
                 >
                   Logout
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <Link
-                  to="/login"
-                  className="px-4 py-2 text-xs font-bold tracking-widest uppercase text-brand-ink hover:text-brand-purple transition-colors"
-                >
-                  Login
-                </Link>
+              <div className="flex items-center gap-5">
+                <Link to="/login"    className={linkCls}>Login</Link>
                 <Link
                   to="/register"
-                  className="px-4 py-2 text-xs font-bold tracking-widest uppercase bg-brand-lime text-brand-ink rounded-full hover:bg-brand-purple hover:text-white transition-colors"
+                  className="px-5 py-2 bg-brand-ink text-brand-cream font-sketch text-[11px] font-bold tracking-[0.18em] uppercase rounded-full hover:bg-brand-purple transition-colors"
                 >
                   Sign Up
                 </Link>
@@ -122,15 +106,13 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* ── Mobile Hamburger ───────────────────────────────── */}
-          {/* Only visible on small screens (md:hidden) */}
-          {/* Chỉ hiển thị trên màn hình nhỏ */}
+          {/* ── Mobile hamburger ─────────────────────────────── */}
           <button
             className="md:hidden p-2 text-brand-ink"
             onClick={() => setMenuOpen((o) => !o)}
             aria-label="Toggle menu"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {menuOpen
                 ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -140,31 +122,32 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* ── Mobile Dropdown Menu ────────────────────────────────── */}
+      {/* ── Mobile dropdown ──────────────────────────────────── */}
       {menuOpen && (
-        <div className="md:hidden bg-brand-cream border-t-2 border-brand-ink px-4 pb-4 flex flex-col gap-4">
-          <NavLink to="/"         className={linkClass} end   onClick={() => setMenuOpen(false)}>Home</NavLink>
-          <NavLink to="/products" className={linkClass}       onClick={() => setMenuOpen(false)}>Shop</NavLink>
-          <NavLink to="/cart"     className={linkClass}       onClick={() => setMenuOpen(false)}>
-            Cart {itemCount > 0 && <span className="ml-1 text-brand-purple">({itemCount})</span>}
-          </NavLink>
+        <div className="md:hidden bg-brand-cream border-t border-brand-outline/20 px-6 py-6 flex flex-col gap-5">
+          <Link to="/products?category=clothing"  className={catClass('clothing')}  onClick={() => setMenuOpen(false)}>Clothing</Link>
+          <Link to="/products?category=footwear"  className={catClass('footwear')}  onClick={() => setMenuOpen(false)}>Footwear</Link>
+          <Link to="/products?category=equipment" className={catClass('equipment')} onClick={() => setMenuOpen(false)}>Equipment</Link>
+          <Link to="/cart" className={linkCls} onClick={() => setMenuOpen(false)}>
+            Cart{itemCount > 0 ? ` (${itemCount})` : ''}
+          </Link>
           {user && !user.isAdmin && (
-            <NavLink to="/orders" className={linkClass}       onClick={() => setMenuOpen(false)}>My Orders</NavLink>
-          )}
-          {user?.isAdmin && (
-            <NavLink to="/admin" className={linkClass}        onClick={() => setMenuOpen(false)}>Admin</NavLink>
+            <Link to="/orders"  className={linkCls} onClick={() => setMenuOpen(false)}>My Orders</Link>
           )}
           {user && (
-            <NavLink to="/profile" className={linkClass} onClick={() => setMenuOpen(false)}>Profile</NavLink>
+            <Link to="/profile" className={linkCls} onClick={() => setMenuOpen(false)}>Profile</Link>
+          )}
+          {user?.isAdmin && (
+            <Link to="/admin"   className={linkCls} onClick={() => setMenuOpen(false)}>Admin</Link>
           )}
           {user ? (
-            <button onClick={handleLogout} className="text-left text-sm font-bold tracking-widest uppercase text-red-500">
+            <button onClick={handleLogout} className="font-sketch text-[11px] font-bold tracking-[0.22em] uppercase text-left text-brand-danger">
               Logout
             </button>
           ) : (
             <>
-              <NavLink to="/login"    className={linkClass}   onClick={() => setMenuOpen(false)}>Login</NavLink>
-              <NavLink to="/register" className={linkClass}   onClick={() => setMenuOpen(false)}>Sign Up</NavLink>
+              <Link to="/login"    className={linkCls} onClick={() => setMenuOpen(false)}>Login</Link>
+              <Link to="/register" className={linkCls} onClick={() => setMenuOpen(false)}>Sign Up</Link>
             </>
           )}
         </div>

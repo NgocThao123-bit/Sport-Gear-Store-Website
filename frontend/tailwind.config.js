@@ -3,22 +3,33 @@ export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
-      // "brand-" prefix avoids collision with Tailwind's built-in purple/blue palettes
-      // Tiền tố "brand-" tránh xung đột với bảng màu purple/blue có sẵn của Tailwind
+      // Sport-Zine design system (from DESIGN.md — Material You sport palette)
       colors: {
-        'brand-lime':   '#C8FF00',
-        'brand-purple': '#9B5CF6',
-        'brand-blue':   '#38BCFF',
-        'brand-cream':  '#F8F8F4',
-        'brand-ink':    '#0A0A0A',
+        'brand-lime':         '#d4ff32',  // primary-container  — neon chartreuse highlight
+        'brand-lime-dim':     '#aed500',  // primary-fixed-dim  — hover / deeper lime
+        'brand-olive':        '#526600',  // primary            — dark olive (text on lime)
+        'brand-purple':       '#635499',  // secondary          — muted violet
+        'brand-purple-light': '#e7deff',  // secondary-fixed    — lavender container
+        'brand-blue':         '#1a6682',  // tertiary           — deep teal-blue
+        'brand-blue-light':   '#dcf2ff',  // tertiary-container — powder blue
+        'brand-cream':        '#fcf9f8',  // background         — warm paper-white
+        'brand-surface':      '#f0edec',  // surface-container  — card background
+        'brand-ink':          '#1c1b1b',  // on-surface         — near black
+        'brand-ink-soft':     '#444934',  // on-surface-variant — muted text
+        'brand-outline':      '#c5c9ad',  // outline-variant    — subtle dividers
+        'brand-danger':       '#ba1a1a',  // error
+        'brand-warning':      '#EEB72B',  // warning — badges, promotions
       },
       fontFamily: {
-        display: ['"Bebas Neue"', 'sans-serif'],
-        sketch:  ['"Caveat"', 'cursive'],
-        sans:    ['"Space Grotesk"', 'sans-serif'],
+        // Epilogue: heavy-duty display for hero headlines (800/900)
+        display: ['"Epilogue"',       'sans-serif'],
+        // Newsreader: editorial serif italic flourish
+        serif:   ['"Newsreader"',     'serif'],
+        // Be Vietnam Pro: friendly approachable body copy
+        sans:    ['"Be Vietnam Pro"', 'sans-serif'],
+        // Space Grotesk: geometric utility layer — labels, nav, pricing
+        sketch:  ['"Space Grotesk"',  'sans-serif'],
       },
-      // Custom keyframe for the horizontal marquee ticker
-      // Keyframe tùy chỉnh cho ticker cuộn ngang
       keyframes: {
         marquee: {
           '0%':   { transform: 'translateX(0%)' },
@@ -26,8 +37,6 @@ export default {
         },
       },
       animation: {
-        // duration: 25s, linear = constant speed, infinite loop
-        // thời gian: 25s, linear = tốc độ không đổi, lặp vô hạn
         marquee: 'marquee 25s linear infinite',
       },
     },
