@@ -31,6 +31,8 @@ export default {
         sketch:  ['"Space Grotesk"',  'sans-serif'],
         // Kalam: handwriting scrapbook font — annotation labels on cards
         note:    ['"Kalam"',          'cursive'],
+        // Permanent Marker: bold marker/brush — doodles, arrows, DIY annotations
+        marker:  ['"Permanent Marker"', 'cursive'],
       },
       keyframes: {
         marquee: {
