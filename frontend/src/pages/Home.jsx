@@ -693,37 +693,6 @@ export default function Home() {
         )}
       </section>
 
-      {/* ══════════════════════════════════════════════════════════
-          SECTION 5 — PROMO BANNER
-          ══════════════════════════════════════════════════════════ */}
-      <motion.section
-        className="bg-brand-lime border-y border-brand-outline/30"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16 py-16 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <p className="font-serif italic text-brand-olive/65 text-lg mb-1">for a limited time</p>
-            <h2 className="font-display font-black text-5xl md:text-6xl text-brand-ink leading-none uppercase" style={{ letterSpacing: '-0.04em' }}>
-              Free Shipping<br />On All Orders
-            </h2>
-          </div>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-          >
-            <Link
-              to="/products"
-              className="block shrink-0 px-10 py-5 bg-brand-ink text-brand-lime font-sketch text-[12px] font-bold tracking-[0.22em] uppercase rounded-full hover:bg-brand-purple hover:text-white transition-colors"
-            >
-              Shop Now ✦
-            </Link>
-          </motion.div>
-        </div>
-      </motion.section>
 
     </div>
   );

@@ -1,107 +1,142 @@
-// Footer.jsx — site footer with brand info + links
-// Footer.jsx — phần chân trang với thông tin thương hiệu + links
-//
-// DESIGN / THIẾT KẾ:
-// Dark ink background (#222815) with lime accent — contrasts the cream body
-// Nền đen đậm (#222815) với điểm nhấn màu lime — tương phản với nền cream
+// Footer.jsx — Sport-Zine editorial footer, content inside soccer-goal net area
 import { Link } from 'react-router-dom';
+import soccerGoal from '../../assets/images/soccer-goal.png';
 
-// Quick link section data — makes the JSX shorter
-// Dữ liệu link nhanh — làm cho JSX gọn hơn
-const SHOP_LINKS = [
-  { label: 'All Products', to: '/products' },
-  { label: 'Football',     to: '/products?category=football' },
-  { label: 'Basketball',   to: '/products?category=basketball' },
-  { label: 'Volleyball',   to: '/products?category=volleyball' },
-  { label: 'Tennis',       to: '/products?category=tennis' },
+const COLUMNS = [
+  {
+    title: 'SHOP',
+    links: [
+      { label: 'Men',         to: '/products?gender=men' },
+      { label: 'Women',       to: '/products?gender=women' },
+      { label: 'Gear',        to: '/products?category=equipment' },
+      { label: 'Collections', to: '/products' },
+    ],
+  },
+  {
+    title: 'ZINE',
+    links: [
+      { label: 'Editorials', to: '#' },
+      { label: 'Lookbooks',  to: '#' },
+      { label: 'Interviews', to: '#' },
+    ],
+  },
+  {
+    title: 'ABOUT',
+    links: [
+      { label: 'Our Story',      to: '#' },
+      { label: 'Sustainability', to: '#' },
+      { label: 'Careers',        to: '#' },
+    ],
+  },
+  {
+    title: 'HELP',
+    links: [
+      { label: 'Contact',  to: '#' },
+      { label: 'FAQ',      to: '#' },
+      { label: 'Returns',  to: '#' },
+      { label: 'Shipping', to: '#' },
+    ],
+  },
 ];
 
-const ACCOUNT_LINKS = [
-  { label: 'My Cart',    to: '/cart' },
-  { label: 'My Orders',  to: '/orders' },
-  { label: 'Login',      to: '/login' },
-  { label: 'Register',   to: '/register' },
-];
+function NavCol({ title, links }) {
+  const bg = {
+    backgroundColor: 'rgba(240,237,236,0.85)',
+    boxShadow: '0 0 8px 6px rgba(240,237,236,0.90)',
+  };
+  return (
+    <div>
+      <h4
+        className="font-sketch font-bold text-base tracking-widest text-brand-ink uppercase mb-3 inline-block px-1"
+        style={bg}
+      >
+        {title}
+      </h4>
+      <ul className="space-y-1.5">
+        {links.map((l) => (
+          <li key={l.label}>
+            <Link
+              to={l.to}
+              className="font-sans text-base text-brand-ink/90 hover:text-brand-ink transition-colors inline-block px-1"
+              style={bg}
+            >
+              {l.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export default function Footer() {
   return (
-    <footer className="bg-brand-ink text-white">
-      {/* ── Top section ─────────────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+    <footer
+      className="relative border-t border-brand-ink/10 overflow-hidden"
+      style={{ height: 'clamp(260px, 32vw, 420px)' }}
+    >
+      {/* Image fills the fixed-height footer */}
+      <img
+        src={soccerGoal}
+        alt=""
+        draggable={false}
+        className="absolute top-1/2 right-0 -translate-y-1/2 w-[45%] h-auto pointer-events-none select-none"
+        style={{ mixBlendMode: 'multiply' }}
+      />
 
-          {/* Brand column */}
-          {/* Cột thương hiệu */}
-          <div className="md:col-span-2">
-            {/* Logo */}
-            <div className="flex items-center gap-2 mb-4">
-              <span className="w-3 h-3 rounded-full bg-brand-lime inline-block" />
-              <span className="font-display text-2xl tracking-widest">
-                SPORT<span className="text-brand-purple">GEAR</span>
-              </span>
-            </div>
-            <p className="text-white/50 text-sm leading-relaxed max-w-xs">
-              Premium sports equipment for athletes who refuse to settle.
-              {/* Thiết bị thể thao cao cấp cho những vận động viên không chịu thua kém. */}
-            </p>
-            {/* Decorative tagline using sketch font */}
-            {/* Tagline trang trí dùng font sketch */}
-            <p className="font-sketch text-brand-lime text-xl mt-3">
-              Play harder. Look better. ✦
-            </p>
-          </div>
+      {/* Slogan — center */}
+      <div className="absolute inset-0 z-10 flex items-center pointer-events-none" >
+        <h2
+          className="font-display font-black italic uppercase leading-none flex flex-col"
+          style={{
+            fontSize: 'clamp(36px, 5vw, 72px)',
+            letterSpacing: '0.04em',
+            color: '#1c1b1b',
+          }}
+        >
+          <span className="pl-64 pr-2 -mt-32 py-2 self-start" style={{ backgroundColor: '#d4ff32' }}>CREATE THE FUTURE</span>
+          <span className="mt-8 pl-2 pr-36 py-2 whitespace-nowrap self-start" style={{ backgroundColor: '#a8dcff', marginLeft: '35%' }}>OF MOVEMENT</span>
+        </h2>
+      </div>
 
-          {/* Shop links column */}
-          {/* Cột link cửa hàng */}
-          <div>
-            <h4 className="font-display text-lg tracking-widest text-brand-lime mb-4">SHOP</h4>
-            <ul className="space-y-2">
-              {SHOP_LINKS.map((l) => (
-                <li key={l.to}>
-                  <Link
-                    to={l.to}
-                    className="text-sm text-white/60 hover:text-white transition-colors"
-                  >
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Account links column */}
-          {/* Cột link tài khoản */}
-          <div>
-            <h4 className="font-display text-lg tracking-widest text-brand-lime mb-4">ACCOUNT</h4>
-            <ul className="space-y-2">
-              {ACCOUNT_LINKS.map((l) => (
-                <li key={l.to}>
-                  <Link
-                    to={l.to}
-                    className="text-sm text-white/60 hover:text-white transition-colors"
-                  >
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+      {/* Stay Connected + Location — bottom left */}
+      <div className="absolute bottom-[15%] left-[4%] z-10 flex flex-col gap-3">
+        <div>
+          <h4 className="font-sketch font-bold text-2xl tracking-widest text-brand-ink uppercase px-1">
+            STAY CONNECTED:
+          </h4>
+          <p className="font-sans text-lg text-brand-ink/65 px-1 mt-1">
+            +84 123 456 789
+          </p>
+        </div>
+        <div>
+          <h4 className="font-sketch font-bold text-2xl tracking-widest text-brand-ink uppercase px-1">
+            LOCATION:
+          </h4>
+          <p className="font-sans text-lg text-brand-ink/65 px-1 mt-1">
+            123 Streetwear St, HCMC
+          </p>
         </div>
       </div>
 
-      {/* ── Bottom bar — copyright ───────────────────────────────── */}
-      <div className="border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="text-white/30 text-xs">
-            © {new Date().getFullYear()} SportGear. All rights reserved.
-          </p>
-          {/* Accent dots decoration / Trang trí chấm màu */}
-          <div className="flex gap-2">
-            <span className="w-2 h-2 rounded-full bg-brand-lime" />
-            <span className="w-2 h-2 rounded-full bg-brand-purple" />
-            <span className="w-2 h-2 rounded-full bg-brand-blue" />
-          </div>
+      {/* Content aligned to right over the image */}
+      <div className="absolute inset-0 z-10 flex flex-col items-end justify-between pt-[6%] pb-[2%] pr-0">
+
+        {/* Nav columns */}
+        <div className="w-[38%] grid grid-cols-4 gap-x-6">
+          {COLUMNS.map((col) => (
+            <NavCol key={col.title} title={col.title} links={col.links} />
+          ))}
         </div>
+
+        {/* Copyright — bottom */}
+        <p
+          className="font-sans text-xs text-brand-ink/55 px-1 mr-[15%]"
+          style={{ backgroundColor: 'rgba(240,237,236,0.85)', boxShadow: '0 0 8px 6px rgba(240,237,236,0.90)' }}
+        >
+          © {new Date().getFullYear()} SportGear. All rights reserved.
+        </p>
+
       </div>
     </footer>
   );
