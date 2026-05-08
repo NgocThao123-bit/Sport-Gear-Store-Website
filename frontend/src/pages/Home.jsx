@@ -132,20 +132,42 @@ function ProductCard({ product }) {
       whileHover={{ y: -8 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
     >
-      {/* Lime category badge */}
-      {product.categoryName && (
-        <span className="absolute top-4 left-4 z-10 bg-brand-lime text-brand-ink font-sketch text-[9px] font-bold px-3 py-1 rounded-full tracking-widest uppercase -rotate-2 shadow-sm">
-          {product.categoryName}
-        </span>
-      )}
+      {/* Category badge — color by category */}
+      {product.categoryName && (() => {
+        const cat = product.categoryName.toLowerCase();
+        const bg  = cat.includes('footwear')  ? '#d4ff32'
+                  : cat.includes('equipment') ? '#a8dcff'
+                  : cat.includes('clothing')  ? '#c3b8e8'
+                  : '#d4ff32';
+        return (
+          <span
+            className="absolute top-4 left-4 z-10 text-brand-ink font-sketch text-[9px] font-bold px-3 py-1 rounded-full tracking-widest uppercase -rotate-2 shadow-sm"
+            style={{ backgroundColor: bg }}
+          >
+            {product.categoryName}
+          </span>
+        );
+      })()}
+
 
       {/* Product image — white sticker cutout glow */}
       <div className="relative h-96 w-full px-4 pt-4">
+        {/* blur glow behind image */}
+        {product.mainImageUrl && (
+          <img
+            src={product.mainImageUrl}
+            alt=""
+            aria-hidden
+            className="absolute inset-4 w-[calc(100%-2rem)] h-[calc(100%-1rem)] object-contain opacity-40"
+            style={{ filter: 'blur(18px) saturate(1.4)', transform: 'scale(0.88) translateY(8px)' }}
+            draggable={false}
+          />
+        )}
         {product.mainImageUrl ? (
           <img
             src={product.mainImageUrl}
             alt={product.name}
-            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+            className="relative w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
             style={{ filter: 'drop-shadow(0 0 8px white) drop-shadow(0 0 22px white) drop-shadow(0 0 2px rgba(0,0,0,0.08))' }}
             draggable={false}
           />
@@ -176,7 +198,7 @@ function ProductCard({ product }) {
             onClick={() => addItem(product.id, null, 1)}
             className="px-4 py-2.5 bg-brand-ink text-brand-cream font-sketch text-[10px] font-bold rounded-full tracking-widest uppercase"
             style={{ boxShadow: '4px 4px 12px rgba(0,0,0,0.28), -2px -2px 6px rgba(255,255,255,0.14)' }}
-            whileHover={{ scale: 1.04, backgroundColor: '#2d2d2d' }}
+            whileHover={{ scale: 1.04, backgroundColor: '#c3b8e8', color: '#1c1b1b' }}
             whileTap={{ scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           >
