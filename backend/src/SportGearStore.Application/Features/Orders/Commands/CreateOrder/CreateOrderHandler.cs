@@ -89,10 +89,9 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Guid>
 
         await _unitOfWork.Orders.AddAsync(order, cancellationToken);
 
-        // 5. Clear the cart after checkout
-        //    Xóa giỏ hàng sau khi thanh toán
-        cart.Items.Clear();
-        _unitOfWork.Carts.Update(cart);
+        // 5. Clear the cart after checkout — use RemoveItems for explicit EF Core deletion
+        //    Xóa giỏ hàng sau thanh toán — dùng RemoveItems để EF Core xóa tường minh
+        _unitOfWork.Carts.RemoveItems(cart.Items.ToList());
 
         // 6. Save everything atomically — all or nothing
         //    Lưu tất cả theo kiểu nguyên tử — tất cả hoặc không có gì

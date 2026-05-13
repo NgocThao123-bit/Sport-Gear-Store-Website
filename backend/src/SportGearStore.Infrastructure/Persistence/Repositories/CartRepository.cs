@@ -30,4 +30,14 @@ public class CartRepository : ICartRepository
 
     public void Update(Cart cart)
         => _context.Carts.Update(cart);
+
+    // Explicitly remove a single CartItem from the DbSet
+    // Xóa tường minh một CartItem khỏi DbSet
+    public void RemoveItem(CartItem item)
+        => _context.CartItems.Remove(item);
+
+    // Explicitly remove multiple CartItems in one call (e.g. clear cart on checkout)
+    // Xóa tường minh nhiều CartItems trong một lần gọi (vd: xóa giỏ khi thanh toán)
+    public void RemoveItems(IEnumerable<CartItem> items)
+        => _context.CartItems.RemoveRange(items);
 }

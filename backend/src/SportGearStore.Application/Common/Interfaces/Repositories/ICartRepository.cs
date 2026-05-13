@@ -15,4 +15,9 @@ public interface ICartRepository
     Task AddAsync(Cart cart, CancellationToken cancellationToken = default);
     Task AddItemAsync(CartItem item, CancellationToken cancellationToken = default);
     void Update(Cart cart);
+
+    // Explicit removal — safer than clearing navigation collection
+    // Xóa tường minh — an toàn hơn so với xóa navigation collection
+    void RemoveItem(CartItem item);
+    void RemoveItems(IEnumerable<CartItem> items);
 }

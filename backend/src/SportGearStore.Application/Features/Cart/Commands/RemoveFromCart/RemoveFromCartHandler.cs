@@ -28,8 +28,11 @@ public class RemoveFromCartHandler : IRequestHandler<RemoveFromCartCommand>
         if (item.CartId != cart.Id)
             throw new ForbiddenException();
 
-        cart.Items.Remove(item);
-        _unitOfWork.Carts.Update(cart);
+        // Use RemoveItem (explicit DbSet.Remove) instead of collection manipulation
+        // so EF Core reliably tracks the deletion.
+        // Dùng RemoveItem (DbSet.Remove tường minh) thay vì thao tác collection
+        // để EF Core theo dõi việc xóa một cách đáng tin cậy.
+        _unitOfWork.Carts.RemoveItem(item);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }
