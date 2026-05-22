@@ -58,6 +58,11 @@ function OrderDrawer({ orderId, onClose, onStatusChange }) {
     onStatusChange(orderId, newStatus);
   };
 
+  const handlePaymentStatus = async (newPaymentStatus) => {
+    await orderApi.updatePaymentStatus(orderId, newPaymentStatus);
+    setDetail((d) => ({ ...d, paymentStatus: newPaymentStatus }));
+  };
+
   return (
     /* Backdrop */
     <div
@@ -112,9 +117,22 @@ function OrderDrawer({ orderId, onClose, onStatusChange }) {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold tracking-widest uppercase text-brand-ink/50">Payment</span>
-                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${detail.paymentStatus === 'Paid' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                    {detail.paymentStatus} · {detail.paymentMethod}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={detail.paymentStatus}
+                      onChange={(e) => handlePaymentStatus(e.target.value)}
+                      className={`text-xs font-bold rounded-full px-3 py-1 border-0 cursor-pointer ${
+                        detail.paymentStatus === 'Paid'     ? 'bg-green-100 text-green-700' :
+                        detail.paymentStatus === 'Refunded' ? 'bg-orange-100 text-orange-700' :
+                                                              'bg-yellow-100 text-yellow-700'
+                      }`}
+                    >
+                      <option value="Unpaid">Unpaid</option>
+                      <option value="Paid">Paid</option>
+                      <option value="Refunded">Refunded</option>
+                    </select>
+                    <span className="text-xs text-brand-ink/50">· {detail.paymentMethod}</span>
+                  </div>
                 </div>
               </div>
 

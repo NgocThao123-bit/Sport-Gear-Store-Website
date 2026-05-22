@@ -104,5 +104,5 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Guid>
         $"SGS-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString()[..6].ToUpper()}";
 
     private static decimal CalculateShippingFee(decimal subTotal) =>
-        subTotal >= 500_000 ? 0 : 30_000;  // Free shipping over 500,000 VND
+        subTotal >= 50 ? 0 : 5;  // Free shipping over $50, otherwise $5
 }

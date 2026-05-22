@@ -11,8 +11,10 @@ import Cart           from './pages/Cart';
 import MyOrders       from './pages/Orders';
 import Profile        from './pages/Profile';
 import NotFound       from './pages/NotFound';
-import Login          from './pages/Login';
-import Register       from './pages/Register';
+import Login              from './pages/Login';
+import Register           from './pages/Register';
+import PaymentProcessing  from './pages/PaymentProcessing';
+import PaymentSuccess     from './pages/PaymentSuccess';
 
 // Admin pages
 import AdminDashboard from './pages/admin/Dashboard';
@@ -31,9 +33,11 @@ export default function App() {
         <Route path="/cart"           element={<Cart />} />
         <Route path="/orders"         element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
         <Route path="/profile"        element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/login"          element={<Login />} />
-        <Route path="/register"       element={<Register />} />
-        <Route path="*"               element={<NotFound />} />
+        <Route path="/login"                element={<Login />} />
+        <Route path="/register"             element={<Register />} />
+        <Route path="/payment/processing"   element={<ProtectedRoute><PaymentProcessing /></ProtectedRoute>} />
+        <Route path="/payment/success"      element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
+        <Route path="*"                     element={<NotFound />} />
 
         {/* ── Admin routes (admin-only guard) ── */}
         <Route path="/admin"          element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />

@@ -44,6 +44,7 @@ public static class DependencyInjection
         // Register services — scoped = one instance per request
         // Đăng ký services — scoped = một instance cho mỗi request
         services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IPaymentService, MockPaymentService>();
 
         // IHttpContextAccessor lets us read the HTTP request inside services
         // IHttpContextAccessor cho phép chúng ta đọc HTTP request bên trong services

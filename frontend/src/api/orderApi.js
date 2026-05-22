@@ -20,6 +20,11 @@ export const orderApi = {
   updateStatus: (id, newStatus) =>
     axiosClient.put(`/orders/${id}/status`, { newStatus }),
 
+  // PUT /api/orders/:id/payment-status — Admin only, update payment status
+  // Cập nhật trạng thái thanh toán (chỉ Admin)
+  updatePaymentStatus: (id, newStatus) =>
+    axiosClient.put(`/orders/${id}/payment-status`, { newStatus }),
+
   // GET /api/orders/admin/all — Admin only, paginated list of all orders
   // Danh sách tất cả đơn hàng có phân trang (chỉ Admin)
   adminGetAll: (params) => axiosClient.get('/orders/admin/all', { params }),

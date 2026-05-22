@@ -4,11 +4,12 @@
 // MỤC ĐÍCH: Endpoints đơn hàng cho khách hàng và admin.
 //
 // ENDPOINTS:
-//   POST /api/orders                     → Customer — checkout (create order from cart)
-//   GET  /api/orders                     → Customer — own order history
-//   GET  /api/orders/{id}                → Customer/Admin — order detail
-//   PUT  /api/orders/{id}/status         → Admin only — update order status
-//   GET  /api/orders/admin/all           → Admin only — all orders paginated
+//   POST /api/orders                         → Customer — checkout (create order from cart)
+//   GET  /api/orders                         → Customer — own order history
+//   GET  /api/orders/{id}                    → Customer/Admin — order detail
+//   PUT  /api/orders/{id}/status             → Admin only — update order status
+//   PUT  /api/orders/{id}/payment-status     → Admin only — update payment status
+//   GET  /api/orders/admin/all               → Admin only — all orders paginated
 // ============================================================
 
 using MediatR;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using SportGearStore.Application.Common.Interfaces.Services;
 using SportGearStore.Application.Features.Orders.Commands.CreateOrder;
 using SportGearStore.Application.Features.Orders.Commands.UpdateOrderStatus;
+using SportGearStore.Application.Features.Orders.Commands.UpdatePaymentStatus;
 using SportGearStore.Application.Features.Orders.Queries.GetAllOrders;
 using SportGearStore.Application.Features.Orders.Queries.GetOrderById;
 using SportGearStore.Application.Features.Orders.Queries.GetOrders;
@@ -97,7 +99,7 @@ public class OrdersController : ControllerBase
         return Ok(result);
     }
 
-    // PUT /api/orders/{id}/status — Admin only
+    // PUT /api/orders/{id}/status — Admin only, update delivery status
     [HttpPut("{id:guid}/status")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateOrderStatus(
@@ -110,6 +112,20 @@ public class OrdersController : ControllerBase
             cancellationToken);
         return NoContent();
     }
+
+    // PUT /api/orders/{id}/payment-status — Admin only, update payment status
+    [HttpPut("{id:guid}/payment-status")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdatePaymentStatus(
+        Guid id,
+        [FromBody] UpdatePaymentStatusRequest request,
+        CancellationToken cancellationToken)
+    {
+        await _sender.Send(
+            new UpdatePaymentStatusCommand(id, request.NewStatus),
+            cancellationToken);
+        return NoContent();
+    }
 }
 
 public record CreateOrderRequest(
@@ -119,3 +135,4 @@ public record CreateOrderRequest(
 );
 
 public record UpdateOrderStatusRequest(OrderStatus NewStatus);
+public record UpdatePaymentStatusRequest(PaymentStatus NewStatus);

@@ -2,9 +2,10 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import useCartStore  from '../store/useCartStore';
-import useAuthStore  from '../store/useAuthStore';
-import { orderApi } from '../api/orderApi';
+import useCartStore     from '../store/useCartStore';
+import useAuthStore     from '../store/useAuthStore';
+import { orderApi }    from '../api/orderApi';
+import { paymentApi }  from '../api/paymentApi';
 
 import stkBaseball       from '../assets/images/stickers/shuttlecock (2).png';
 import stkTennis         from '../assets/images/stickers/tennis.png';
@@ -28,6 +29,13 @@ import stkTennisRacket  from '../assets/images/stickers/tennis-racket.png';
 const STEP_CART     = 'cart';
 const STEP_CHECKOUT = 'checkout';
 const STEP_SUCCESS  = 'success';
+
+const PAYMENT_METHODS = [
+  { id: 'Credit Card',      label: 'VISA',    sub: 'Visa / Mastercard'  },
+  { id: 'MoMo',             label: 'MoMo',    sub: 'MoMo e-wallet'      },
+  { id: 'ZaloPay',          label: 'ZaloPay', sub: 'ZaloPay e-wallet'   },
+  { id: 'Cash on Delivery', label: 'COD',     sub: 'Pay on delivery'    },
+];
 
 const CARD_ROTATIONS = [-2, 1.5, -1, 2.5, -1.5, 1];
 
@@ -153,13 +161,16 @@ export default function Cart() {
     setFormErr('');
     setPlacing(true);
     try {
-      await orderApi.create({
+      const res     = await orderApi.create({
         shippingAddress: address.trim(),
         paymentMethod:   payment,
         notes:           notes.trim() || undefined,
       });
+      const orderId = res.data.id;
       clearCart();
-      setStep(STEP_SUCCESS);
+      // All methods go through the same processing page for consistent UX
+      // Tất cả phương thức đều qua trang processing để UX đồng nhất
+      navigate(`/payment/processing?orderId=${orderId}&method=${encodeURIComponent(payment)}`);
     } catch {
       setFormErr('Could not place your order. Please try again.');
     } finally {
@@ -386,33 +397,35 @@ export default function Cart() {
                     PAYMENT
                   </h2>
 
-                  <div className="flex flex-col gap-2 mb-5">
-                    <label className="font-note italic font-bold text-brand-ink/65 text-lg">Method</label>
-                    <select value={payment} onChange={(e) => setPayment(e.target.value)}
-                      className="font-sans text-sm bg-white/70 px-5 py-4 focus:outline-none cursor-pointer"
-                      style={{
-                        border: '3px solid #1c1b1b',
-                        borderRadius: '15px 255px 15px 225px/225px 15px 255px 15px',
-                        boxShadow: '4px 4px 0 rgba(0,0,0,0.12)',
-                      }}>
-                      <option>Credit Card</option>
-                      <option>Cash on Delivery</option>
-                      <option>Bank Transfer</option>
-                    </select>
-                  </div>
-
-                  {/* Payment sticker badges */}
-                  <div className="flex gap-3 flex-wrap">
-                    {['VISA', 'MASTERCARD', 'COD'].map((m) => (
-                      <span key={m}
-                        className="px-3 py-1.5 font-sketch font-black text-[11px] tracking-widest uppercase text-brand-ink border-2 border-brand-ink"
-                        style={{
-                          borderRadius: '255px 12px 230px 10px/10px 230px 12px 255px',
-                          backgroundColor: payment === (m === 'COD' ? 'Cash on Delivery' : m === 'VISA' ? 'Credit Card' : 'Bank Transfer') ? '#d4ff32' : 'white',
-                        }}>
-                        {m}
-                      </span>
-                    ))}
+                  {/* Payment method cards — click to select */}
+                  {/* Thẻ chọn phương thức thanh toán — click để chọn */}
+                  <div className="flex flex-col gap-3">
+                    {PAYMENT_METHODS.map((m) => {
+                      const selected = payment === m.id;
+                      return (
+                        <button key={m.id} type="button" onClick={() => setPayment(m.id)}
+                          className="flex items-center gap-4 px-5 py-4 text-left w-full transition-all"
+                          style={{
+                            border: '3px solid #1c1b1b',
+                            borderRadius: selected ? '24px' : '14px 255px 14px 240px/240px 14px 255px 14px',
+                            backgroundColor: selected ? '#d4ff32' : 'rgba(255,255,255,0.72)',
+                            boxShadow: selected
+                              ? '4px 4px 0 #1c1b1b'
+                              : '2px 2px 0 rgba(0,0,0,0.08)',
+                          }}>
+                          <span className="font-display text-brand-ink font-black tracking-widest"
+                            style={{ fontSize: 18, minWidth: 72 }}>
+                            {m.label}
+                          </span>
+                          <span className="font-note italic text-brand-ink/55 text-sm flex-1">
+                            {m.sub}
+                          </span>
+                          {selected && (
+                            <span className="font-sketch font-black text-brand-ink text-base ml-auto">✓</span>
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
