@@ -33,6 +33,10 @@ export default {
         note:    ['"Kalam"',          'cursive'],
         // Permanent Marker: bold marker/brush — doodles, arrows, DIY annotations
         marker:  ['"Permanent Marker"', 'cursive'],
+        // Anton: condensed sans-serif — sport buttons, bold CTAs
+        anton:   ['"Anton"',            'sans-serif'],
+        // Barlow Condensed: modern condensed — bold sport labels
+        barlow:  ['"Barlow Condensed"', 'sans-serif'],
       },
       keyframes: {
         marquee: {

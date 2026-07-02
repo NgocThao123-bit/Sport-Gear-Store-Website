@@ -3,8 +3,32 @@
 // Font: Space Grotesk (font-sketch) for all labels — geometric utility layer
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import useAuthStore from '../../store/useAuthStore';
 import useCartStore from '../../store/useCartStore';
+
+function AnimatedNavLink({ to, active, children, onClick }) {
+  return (
+    <motion.div className="relative inline-block" initial="rest" whileHover="hover">
+      <Link
+        to={to}
+        onClick={onClick}
+        className={`font-sketch text-[11px] font-bold tracking-[0.22em] uppercase transition-colors ${
+          active ? 'text-brand-ink' : 'text-brand-ink/40 hover:text-brand-ink'
+        }`}
+      >
+        {children}
+      </Link>
+      <motion.span
+        className="absolute -bottom-0.5 left-0 w-full h-[1.5px] bg-brand-ink origin-left block"
+        variants={{
+          rest:  { scaleX: 0 },
+          hover: { scaleX: 1, transition: { duration: 0.22, ease: 'easeOut' } },
+        }}
+      />
+    </motion.div>
+  );
+}
 
 export default function Navbar() {
   const { user, logout }        = useAuthStore();
@@ -49,16 +73,11 @@ export default function Navbar() {
 
           {/* ── Desktop center: category links ──────────────── */}
           <div className="hidden md:flex items-center gap-12">
-            <Link to="/products?category=clothing"  className={catClass('clothing')}>Clothing</Link>
-            <Link to="/products?category=footwear"  className={catClass('footwear')}>Footwear</Link>
-            <Link to="/products?category=equipment" className={catClass('equipment')}>Equipment</Link>
+            <AnimatedNavLink to="/products?category=clothing"  active={activeCat === 'clothing'}>Clothing</AnimatedNavLink>
+            <AnimatedNavLink to="/products?category=footwear"  active={activeCat === 'footwear'}>Footwear</AnimatedNavLink>
+            <AnimatedNavLink to="/products?category=equipment" active={activeCat === 'equipment'}>Equipment</AnimatedNavLink>
             {user?.isAdmin && (
-              <Link
-                to="/admin"
-                className={`font-sketch text-[11px] font-bold tracking-[0.22em] uppercase transition-colors ${pathname.startsWith('/admin') ? 'text-brand-ink' : 'text-brand-ink/40 hover:text-brand-ink'}`}
-              >
-                Admin
-              </Link>
+              <AnimatedNavLink to="/admin" active={pathname.startsWith('/admin')}>Admin</AnimatedNavLink>
             )}
           </div>
 

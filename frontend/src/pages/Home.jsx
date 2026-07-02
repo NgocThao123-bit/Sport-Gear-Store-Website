@@ -1,8 +1,9 @@
 // Home.jsx — NEOGEN-style Sport-Zine landing page
 // Framer Motion entrance animations + sticker PNG assets
-import { useEffect, useState }  from 'react';
-import { Link }                  from 'react-router-dom';
-import { motion }                from 'framer-motion';
+import { useEffect, useState }              from 'react';
+import { Link }                             from 'react-router-dom';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import MagneticButton                       from '../components/ui/MagneticButton';
 import { productApi }            from '../api/productApi';
 import useCartStore              from '../store/useCartStore';
 
@@ -98,8 +99,8 @@ const STICKER = {
 // REUSABLE SUB-COMPONENTS
 // ════════════════════════════════════════════════════════════════════════════
 
-// Sticker wrapper — spring pop, hover scale, responsive scale (position stays fixed)
-function Sticker({ delay = 1.0, rotate = 0, className = '', style = {}, children }) {
+// Sticker wrapper — spring pop entrance + continuous float + hover scale
+function Sticker({ delay = 1.0, rotate = 0, floatDuration = 3.5, className = '', style = {}, children }) {
   return (
     <motion.div
       className={`absolute hidden sm:block z-[30] ${className}`}
@@ -110,9 +111,13 @@ function Sticker({ delay = 1.0, rotate = 0, className = '', style = {}, children
       custom={{ delay, rotate }}
       whileHover={{ scale: 1.12, transition: { type: 'spring', stiffness: 400, damping: 12 } }}
     >
-      <div className="origin-top-left scale-[0.45] sm:scale-[0.6] md:scale-[0.8] lg:scale-100">
+      <motion.div
+        className="origin-top-left scale-[0.45] sm:scale-[0.6] md:scale-[0.8] lg:scale-100"
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: floatDuration, repeat: Infinity, ease: 'easeInOut', delay: delay * 0.4 }}
+      >
         {children}
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
@@ -217,6 +222,10 @@ export default function Home() {
   const [featured, setFeatured] = useState([]);
   const [loading,  setLoading]  = useState(true);
 
+  const { scrollY } = useScroll();
+  const athleteY    = useTransform(scrollY, [0, 700], [0, -120]);
+  const heroTextY   = useTransform(scrollY, [0, 700], [0,  -55]);
+
   useEffect(() => {
     productApi.getAll({ pageSize: 4, sortBy: 'newest' })
       .then((r) => setFeatured(r.data.items ?? r.data))
@@ -238,7 +247,7 @@ export default function Home() {
         <div className="absolute bottom-[5%] left-[5%] w-[320px] h-[320px] rounded-full bg-brand-lime/10 blur-[80px]  pointer-events-none" />
 
         {/* ── TEXT BLOCK (z-1, vertically centered, full-width lime strips) ── */}
-        <div className="absolute inset-0 flex flex-col justify-center z-[1] pointer-events-none">
+        <motion.div className="absolute inset-0 flex flex-col justify-center z-[1] pointer-events-none" style={{ y: heroTextY }}>
 
           {/* Line 1 — NEW ERA */}
           <div className="overflow-hidden w-full">
@@ -268,19 +277,24 @@ export default function Home() {
               CREATE MOVEMENT
             </motion.h1>
           </div>
-        </div>
+        </motion.div>
 
         {/* ── ATHLETE (z-20, bottom-anchored, in front of text) ────────── */}
-        <motion.img
-          src={heroImg}
-          alt="Athlete"
-          draggable={false}
-          className="absolute bottom-[10%] h-[82%] w-auto max-w-none object-contain z-[20] select-none pointer-events-none"
-          style={{ filter: 'grayscale(1) contrast(1.12)', left: 'calc(64px + 67vw)' }}
-          variants={ATHLETE}
-          initial="hidden"
-          animate="visible"
-        />
+        <motion.div
+          className="absolute bottom-[10%] h-[82%] z-[20] select-none pointer-events-none"
+          style={{ y: athleteY, left: 'calc(64px + 67vw)' }}
+        >
+          <motion.img
+            src={heroImg}
+            alt="Athlete"
+            draggable={false}
+            className="h-full w-auto max-w-none object-contain"
+            style={{ filter: 'grayscale(1) contrast(1.12)' }}
+            variants={ATHLETE}
+            initial="hidden"
+            animate="visible"
+          />
+        </motion.div>
 
         {/* ── CTA BUTTONS (z-30, centered, above athlete) ──────────────── */}
         <motion.div
@@ -289,22 +303,26 @@ export default function Home() {
           initial="hidden"
           animate="visible"
         >
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 15 }}>
-            <Link
-              to="/products"
-              className="block px-8 py-4 bg-brand-lime text-brand-ink font-sketch text-[12px] font-bold tracking-[0.22em] uppercase rounded-full shadow-md hover:bg-brand-lime-dim transition-colors"
-            >
-              SHOP NOW
-            </Link>
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 15 }}>
-            <Link
-              to="/products"
-              className="block px-8 py-4 bg-brand-ink text-brand-cream font-sketch text-[12px] font-bold tracking-[0.22em] uppercase rounded-full shadow-md hover:bg-brand-purple transition-colors"
-            >
-              VIEW COLLECTION
-            </Link>
-          </motion.div>
+          <MagneticButton>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 15 }}>
+              <Link
+                to="/products"
+                className="block px-8 py-4 bg-brand-lime text-brand-ink font-sketch text-[12px] font-bold tracking-[0.22em] uppercase rounded-full shadow-md hover:bg-brand-lime-dim transition-colors"
+              >
+                SHOP NOW
+              </Link>
+            </motion.div>
+          </MagneticButton>
+          <MagneticButton>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 15 }}>
+              <Link
+                to="/products"
+                className="block px-8 py-4 bg-brand-ink text-brand-cream font-sketch text-[12px] font-bold tracking-[0.22em] uppercase rounded-full shadow-md hover:bg-brand-purple transition-colors"
+              >
+                VIEW COLLECTION
+              </Link>
+            </motion.div>
+          </MagneticButton>
         </motion.div>
 
         {/* ════════════════════════════════════════════════════════════════

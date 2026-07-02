@@ -14,7 +14,7 @@ namespace SportGearStore.Application.Features.Products.Queries.GetProducts;
 
 public record GetProductsQuery(
     int PageNumber = 1,
-    int PageSize = 12,
+    int PageSize = 10,
     Guid? CategoryId = null,
     string? SearchTerm = null,
     decimal? MinPrice = null,

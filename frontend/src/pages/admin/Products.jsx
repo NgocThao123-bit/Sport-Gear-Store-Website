@@ -1,4 +1,4 @@
-// admin/Products.jsx — admin product management with TanStack Table
+// admin/Products.jsx — product management table (redesigned)
 import { useEffect, useState, useMemo } from 'react';
 import {
   useReactTable,
@@ -10,68 +10,90 @@ import {
 } from '@tanstack/react-table';
 import { productApi, categoryApi } from '../../api/productApi';
 
-// ── Column helper (typed by shape of product rows) ─────────────────────────
 const col = createColumnHelper();
 
-// ── Empty form for CREATE mode ─────────────────────────────────────────────
-const emptyForm = () => ({
-  name:        '',
-  brand:       '',
-  description: '',
-  price:       '',
-  salePrice:   '',
-  categoryId:  '',
-  isActive:    true,
-  imageUrls:   [''],
-  variants:    [{ size: '', color: '', stock: 10, extraPrice: 0 }],
-});
-
-// ── Pre-fill form from a product row for EDIT mode ─────────────────────────
-const formFromProduct = (p) => ({
-  name:        p.name,
-  brand:       p.brand,
-  description: p.description ?? '',
-  price:       p.price,
-  salePrice:   p.salePrice ?? '',
-  categoryId:  p.categoryId,
-  isActive:    p.isActive,
-  imageUrls:   [''],
-  variants:    [{ size: '', color: '', stock: 10, extraPrice: 0 }],
-});
-
-// ── Sort indicator ─────────────────────────────────────────────────────────
-const SortIcon = ({ column }) => {
-  const sorted = column.getIsSorted();
-  return (
-    <span className="ml-1 inline-block w-3 text-brand-lime/60">
-      {sorted === 'asc' ? '↑' : sorted === 'desc' ? '↓' : '↕'}
-    </span>
-  );
+// ── Row background by category ─────────────────────────────────────────────
+const getCategoryBg = (name = '') => {
+  const n = name.toLowerCase();
+  if (n.includes('clothing'))  return '#f2ffe0';  // lime pastel
+  if (n.includes('footwear'))  return '#e0f2ff';  // blue pastel
+  if (n.includes('equipment')) return '#f0ebff';  // purple pastel
+  return '#ffffff';
 };
+
+const getCategoryDot = (name = '') => {
+  const n = name.toLowerCase();
+  if (n.includes('clothing'))  return '#84cc16';
+  if (n.includes('footwear'))  return '#38bdf8';
+  if (n.includes('equipment')) return '#a78bfa';
+  return '#94a3b8';
+};
+
+// ── SVG Icons ──────────────────────────────────────────────────────────────
+const IconEdit = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+  </svg>
+);
+
+const IconTrash = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+  </svg>
+);
+
+const IconPlus = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+  </svg>
+);
+
+const IconSearch = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+  </svg>
+);
+
+const SortIcon = ({ column }) => {
+  const s = column.getIsSorted();
+  return <span className="ml-1 text-brand-lime/60">{s === 'asc' ? '↑' : s === 'desc' ? '↓' : '↕'}</span>;
+};
+
+// ── Form helpers ───────────────────────────────────────────────────────────
+const emptyForm = () => ({
+  name: '', brand: '', description: '', price: '', salePrice: '',
+  categoryId: '', isActive: true, imageUrls: [''],
+  variants: [{ size: '', color: '', stock: 10, extraPrice: 0 }],
+});
+
+const formFromProduct = (p) => ({
+  name: p.name, brand: p.brand, description: p.description ?? '',
+  price: p.price, salePrice: p.salePrice ?? '', categoryId: p.categoryId,
+  isActive: p.isActive, imageUrls: [''],
+  variants: [{ size: '', color: '', stock: 10, extraPrice: 0 }],
+});
 
 const PAGE_SIZE = 10;
 
 export default function AdminProducts() {
-  const [products,   setProducts]   = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [loading,    setLoading]    = useState(true);
-  const [page,       setPage]       = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
-
-  // TanStack table state
-  const [sorting,     setSorting]     = useState([]);
+  const [products,     setProducts]     = useState([]);
+  const [categories,   setCategories]   = useState([]);
+  const [loading,      setLoading]      = useState(true);
+  const [page,         setPage]         = useState(1);
+  const [totalPages,   setTotalPages]   = useState(1);
+  const [totalCount,   setTotalCount]   = useState(0);
+  const [sorting,      setSorting]      = useState([]);
   const [globalFilter, setGlobalFilter] = useState('');
-
-  // modal: null = closed, 'create' = add new, object = product being edited
-  const [modal,     setModal]     = useState(null);
-  const [form,      setForm]      = useState(emptyForm());
-  const [saving,    setSaving]    = useState(false);
-  const [formError, setFormError] = useState('');
+  const [modal,        setModal]        = useState(null);
+  const [form,         setForm]         = useState(emptyForm());
+  const [saving,       setSaving]       = useState(false);
+  const [formError,    setFormError]    = useState('');
 
   const isEdit = modal !== null && modal !== 'create';
 
-  // ── Load data ─────────────────────────────────────────────────────────────
   const load = (pageNumber = page) => {
     setLoading(true);
     Promise.all([
@@ -91,11 +113,9 @@ export default function AdminProducts() {
 
   useEffect(() => { load(page); }, [page]);
 
-  // ── Open modals ───────────────────────────────────────────────────────────
-  const openCreate = () => { setForm(emptyForm()); setFormError(''); setModal('create'); };
+  const openCreate = () => { setForm(emptyForm());          setFormError(''); setModal('create'); };
   const openEdit   = (p)  => { setForm(formFromProduct(p)); setFormError(''); setModal(p); };
 
-  // ── Delete ────────────────────────────────────────────────────────────────
   const handleDelete = async (id, name) => {
     if (!window.confirm(`Soft-delete "${name}"? It will be hidden from the store.`)) return;
     try {
@@ -103,12 +123,9 @@ export default function AdminProducts() {
       const nextPage = products.length === 1 && page > 1 ? page - 1 : page;
       setPage(nextPage);
       if (nextPage === page) load(page);
-    } catch {
-      alert('Failed to delete product.');
-    }
+    } catch { alert('Failed to delete product.'); }
   };
 
-  // ── Form helpers ──────────────────────────────────────────────────────────
   const setField      = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const setVariant    = (i, k, v) => setForm((f) => { const a = [...f.variants]; a[i] = { ...a[i], [k]: v }; return { ...f, variants: a }; });
   const addVariant    = () => setForm((f) => ({ ...f, variants: [...f.variants, { size: '', color: '', stock: 10, extraPrice: 0 }] }));
@@ -125,7 +142,6 @@ export default function AdminProducts() {
     return null;
   };
 
-  // ── Submit ────────────────────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
     const err = validate();
@@ -154,101 +170,128 @@ export default function AdminProducts() {
             .map((v) => ({ size: v.size || null, color: v.color || null, stock: +v.stock, extraPrice: +v.extraPrice })),
         });
       }
-      setModal(null);
-      load();
+      setModal(null); load();
     } catch (err) {
       setFormError(err.response?.data?.detail ?? `Failed to ${isEdit ? 'update' : 'create'} product.`);
-    } finally {
-      setSaving(false);
-    }
+    } finally { setSaving(false); }
   };
 
-  // ── TanStack Table column definitions ─────────────────────────────────────
+  // ── Columns ────────────────────────────────────────────────────────────────
   const columns = useMemo(() => [
+    // Image — wide column
     col.display({
       id: 'image',
       header: '',
       enableSorting: false,
       cell: ({ row: { original: p } }) => p.mainImageUrl ? (
         <img src={p.mainImageUrl} alt={p.name}
-          className="w-20 h-20 object-cover rounded-2xl border border-brand-ink/10" />
+          className="w-20 h-20 object-contain rounded-xl border-2 border-brand-ink/10 bg-white"
+          style={{ mixBlendMode: 'multiply' }} />
       ) : (
-        <div className="w-20 h-20 rounded-2xl bg-brand-ink/10 flex items-center justify-center text-brand-ink/30 text-xs font-bold">N/A</div>
+        <div className="w-20 h-20 rounded-xl bg-brand-ink/8 border-2 border-brand-ink/10 flex items-center justify-center">
+          <span className="text-brand-ink/20 text-xs font-bold font-display tracking-widest">N/A</span>
+        </div>
       ),
     }),
+
+    // Name — single line with native tooltip
     col.accessor('name', {
       header: 'Name',
-      cell: (info) => <span className="font-bold text-brand-ink">{info.getValue()}</span>,
+      cell: (info) => (
+        <div className="max-w-[220px]">
+          <p className="font-bold text-brand-ink text-sm truncate leading-snug" title={info.getValue()}>
+            {info.getValue()}
+          </p>
+          <p className="text-brand-ink/40 text-xs tracking-widest uppercase mt-0.5">
+            {info.row.original.brand}
+          </p>
+        </div>
+      ),
     }),
-    col.accessor('brand', {
-      header: 'Brand',
-      cell: (info) => <span className="text-brand-ink/60 text-xs uppercase tracking-widest">{info.getValue()}</span>,
-    }),
+
+    // Price
     col.accessor('price', {
       header: 'Price',
       cell: ({ row: { original: p } }) => p.salePrice ? (
-        <span className="flex items-baseline gap-2">
-          <span className="text-brand-purple font-display">${p.salePrice.toFixed(2)}</span>
+        <div className="flex flex-col gap-0.5">
+          <span className="text-brand-purple font-display text-base">${p.salePrice.toFixed(2)}</span>
           <span className="line-through text-brand-ink/30 text-xs">${p.price.toFixed(2)}</span>
-        </span>
+        </div>
       ) : (
-        <span className="text-brand-purple font-display">${p.price?.toFixed(2)}</span>
+        <span className="text-brand-purple font-display text-base">${p.price?.toFixed(2)}</span>
       ),
     }),
+
+    // Category — colored dot + name
     col.accessor('categoryName', {
       header: 'Category',
-      cell: (info) => <span className="text-brand-ink/60">{info.getValue()}</span>,
+      cell: (info) => (
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+            style={{ backgroundColor: getCategoryDot(info.getValue()) }} />
+          <span className="text-brand-ink/70 text-sm font-medium">{info.getValue()}</span>
+        </div>
+      ),
     }),
+
+    // Status
     col.accessor('isActive', {
       header: 'Status',
+      enableSorting: false,
       cell: (info) => (
-        <span className={`text-xs font-bold px-2 py-1 rounded-full ${info.getValue() ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-500'}`}>
-          {info.getValue() ? 'Active' : 'Deleted'}
+        <span className={`text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap ${
+          info.getValue() ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-500'
+        }`}>
+          {info.getValue() ? '● Active' : '○ Hidden'}
         </span>
       ),
     }),
+
+    // Actions — icon buttons
     col.display({
       id: 'actions',
       header: '',
       enableSorting: false,
       cell: ({ row: { original: p } }) => (
-        <div className="flex items-center justify-end gap-4">
-          <button onClick={() => openEdit(p)}
-            className="text-brand-purple text-xs font-bold tracking-widest uppercase hover:text-brand-ink transition-colors">
-            Edit
+        <div className="flex items-center justify-end gap-2 pr-2">
+          <button
+            onClick={() => openEdit(p)}
+            title="Edit product"
+            className="w-9 h-9 flex items-center justify-center rounded-xl border-2 border-brand-purple text-brand-purple hover:bg-brand-purple hover:text-white transition-all"
+          >
+            <IconEdit />
           </button>
-          <button onClick={() => handleDelete(p.id, p.name)}
-            className="text-red-400 text-xs font-bold tracking-widest uppercase hover:text-red-600 transition-colors">
-            Delete
+          <button
+            onClick={() => handleDelete(p.id, p.name)}
+            title="Delete product"
+            className="w-9 h-9 flex items-center justify-center rounded-xl border-2 border-red-400 text-red-400 hover:bg-red-400 hover:text-white transition-all"
+          >
+            <IconTrash />
           </button>
         </div>
       ),
     }),
-  ], [products]);   // re-create when products change so closures (handleDelete, openEdit) stay fresh
+  ], [products]);
 
-  // ── TanStack Table instance ───────────────────────────────────────────────
   const table = useReactTable({
-    data: products,
-    columns,
-    state:           { sorting, globalFilter },
+    data: products, columns,
+    state: { sorting, globalFilter },
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel:     getCoreRowModel(),
     getSortedRowModel:   getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    manualPagination: true,   // server handles pages — TanStack must not slice data
+    manualPagination: true,
   });
 
-  // ── Shared input class ────────────────────────────────────────────────────
   const inp = 'border-2 border-brand-ink rounded-xl px-4 py-2 bg-white font-sans text-sm focus:outline-none focus:border-brand-purple w-full';
 
-  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="bg-brand-cream min-h-screen">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-12">
 
         {/* ── Header ── */}
-        <div className="flex items-end justify-between mb-6">
+        <div className="flex items-end justify-between mb-8">
           <div>
             <h1 className="font-display text-5xl text-brand-ink">
               PRODUCTS <span className="text-brand-purple">ADMIN</span>
@@ -256,56 +299,75 @@ export default function AdminProducts() {
             <p className="text-brand-ink/50 text-sm mt-1">{totalCount} products total</p>
           </div>
           <button onClick={openCreate}
-            className="px-6 py-3 bg-brand-lime text-brand-ink font-display tracking-widest text-sm rounded-2xl border-2 border-brand-ink hover:bg-brand-purple hover:text-white transition-colors">
-            + ADD PRODUCT
+            className="flex items-center gap-2 px-6 py-3 bg-brand-lime text-brand-ink font-display tracking-widest text-sm rounded-2xl border-2 border-brand-ink hover:bg-brand-purple hover:text-white transition-colors">
+            <IconPlus />
+            ADD PRODUCT
           </button>
         </div>
 
-        {/* ── Search bar ── */}
-        <div className="mb-4">
-          <input
-            value={globalFilter}
-            onChange={(e) => setGlobalFilter(e.target.value)}
-            placeholder="Search this page..."
-            className="w-full max-w-sm border-2 border-brand-ink rounded-2xl px-5 py-2.5 bg-white text-sm font-sans focus:outline-none focus:border-brand-purple"
-          />
+        {/* ── Legend + Search row ── */}
+        <div className="flex items-center justify-between mb-5 gap-4 flex-wrap">
+          {/* Category color legend */}
+          <div className="flex items-center gap-5">
+            {[
+              { label: 'Clothing',  color: '#84cc16', bg: '#f2ffe0' },
+              { label: 'Footwear',  color: '#38bdf8', bg: '#e0f2ff' },
+              { label: 'Equipment', color: '#a78bfa', bg: '#f0ebff' },
+            ].map((c) => (
+              <div key={c.label} className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-brand-ink/15"
+                style={{ backgroundColor: c.bg }}>
+                <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: c.color }} />
+                <span className="text-xs font-bold text-brand-ink/60 tracking-widest uppercase">{c.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Search with icon */}
+          <div className="relative">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-ink/35 pointer-events-none">
+              <IconSearch />
+            </span>
+            <input
+              value={globalFilter}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              placeholder="Search products..."
+              className="border-2 border-brand-ink rounded-2xl pl-10 pr-5 py-2.5 bg-white text-sm font-sans focus:outline-none focus:border-brand-purple w-72"
+            />
+          </div>
         </div>
 
         {/* ── Table ── */}
         {loading ? (
-          <div className="flex justify-center py-20">
+          <div className="flex justify-center py-24">
             <div className="w-12 h-12 border-4 border-brand-purple border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
-          <div className="bg-white rounded-3xl border-2 border-brand-ink overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-brand-ink text-brand-lime">
-                {table.getHeaderGroups().map((hg) => (
-                  <tr key={hg.id}>
-                    {hg.headers.map((header) => (
-                      <th
-                        key={header.id}
-                        onClick={header.column.getToggleSortingHandler()}
-                        className={`px-6 py-4 text-left font-display tracking-widest select-none
-                          ${header.column.getCanSort() ? 'cursor-pointer hover:text-white' : ''}
-                          ${header.id === 'image' || header.id === 'actions' ? 'w-16' : ''}`}
-                      >
-                        {header.isPlaceholder ? null : (
-                          <span className="flex items-center gap-1">
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                            {header.column.getCanSort() && <SortIcon column={header.column} />}
-                          </span>
-                        )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
+          <div className="bg-white rounded-3xl border-2 border-brand-ink overflow-hidden shadow-sm">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-brand-ink text-brand-lime">
+                  {table.getHeaderGroups()[0].headers.map((header) => (
+                    <th key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      className={`px-5 py-5 text-left font-display tracking-widest text-sm select-none
+                        ${header.column.getCanSort() ? 'cursor-pointer hover:text-white' : ''}
+                        ${header.id === 'image'   ? 'w-36' : ''}
+                        ${header.id === 'actions' ? 'w-28' : ''}`}>
+                      <span className="flex items-center gap-1">
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.column.getCanSort() && <SortIcon column={header.column} />}
+                      </span>
+                    </th>
+                  ))}
+                </tr>
               </thead>
-              <tbody>
-                {table.getRowModel().rows.map((row, i) => (
-                  <tr key={row.id} className={i % 2 === 0 ? 'bg-brand-cream/30' : ''}>
+              <tbody className="divide-y divide-brand-ink/6">
+                {table.getRowModel().rows.map((row) => (
+                  <tr key={row.id}
+                    style={{ backgroundColor: getCategoryBg(row.original.categoryName) }}
+                    className="transition-all hover:brightness-95">
                     {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="px-6 py-3">
+                      <td key={cell.id} className="px-5 py-4">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </td>
                     ))}
@@ -314,63 +376,41 @@ export default function AdminProducts() {
               </tbody>
             </table>
 
-            {table.getRowModel().rows.length === 0 && !loading && (
-              <p className="text-center py-10 text-brand-ink/40 font-display text-xl">
+            {table.getRowModel().rows.length === 0 && (
+              <p className="text-center py-16 text-brand-ink/30 font-display text-2xl tracking-widest">
                 {globalFilter ? 'NO RESULTS' : 'NO PRODUCTS'}
               </p>
             )}
 
-            {/* ── Pagination ── */}
+            {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex items-center justify-between px-6 py-4 border-t-2 border-brand-ink/10">
                 <p className="text-xs text-brand-ink/50 font-bold tracking-widest">
                   PAGE {page} OF {totalPages}
                 </p>
                 <div className="flex gap-2">
-                  <button
-                    onClick={() => setPage(1)}
-                    disabled={page === 1}
-                    className="px-3 py-1.5 text-xs font-bold border-2 border-brand-ink rounded-xl disabled:opacity-30 hover:bg-brand-ink hover:text-brand-lime transition-colors"
-                  >«</button>
-                  <button
-                    onClick={() => setPage((p) => p - 1)}
-                    disabled={page === 1}
-                    className="px-3 py-1.5 text-xs font-bold border-2 border-brand-ink rounded-xl disabled:opacity-30 hover:bg-brand-ink hover:text-brand-lime transition-colors"
-                  >‹ Prev</button>
-
-                  {/* Page number buttons */}
+                  <button onClick={() => setPage(1)} disabled={page === 1}
+                    className="px-3 py-1.5 text-xs font-bold border-2 border-brand-ink rounded-xl disabled:opacity-30 hover:bg-brand-ink hover:text-brand-lime transition-colors">«</button>
+                  <button onClick={() => setPage((p) => p - 1)} disabled={page === 1}
+                    className="px-3 py-1.5 text-xs font-bold border-2 border-brand-ink rounded-xl disabled:opacity-30 hover:bg-brand-ink hover:text-brand-lime transition-colors">‹ Prev</button>
                   {Array.from({ length: totalPages }, (_, i) => i + 1)
                     .filter((n) => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
                     .reduce((acc, n, idx, arr) => {
                       if (idx > 0 && n - arr[idx - 1] > 1) acc.push('…');
-                      acc.push(n);
-                      return acc;
+                      acc.push(n); return acc;
                     }, [])
-                    .map((n, idx) =>
-                      n === '…' ? (
-                        <span key={`ellipsis-${idx}`} className="px-2 py-1.5 text-xs text-brand-ink/40">…</span>
-                      ) : (
-                        <button
-                          key={n}
-                          onClick={() => setPage(n)}
+                    .map((n, idx) => n === '…'
+                      ? <span key={`e${idx}`} className="px-2 py-1.5 text-xs text-brand-ink/40">…</span>
+                      : <button key={n} onClick={() => setPage(n)}
                           className={`px-3 py-1.5 text-xs font-bold border-2 rounded-xl transition-colors
-                            ${n === page
-                              ? 'bg-brand-ink text-brand-lime border-brand-ink'
-                              : 'border-brand-ink hover:bg-brand-ink hover:text-brand-lime'}`}
-                        >{n}</button>
-                      )
+                            ${n === page ? 'bg-brand-ink text-brand-lime border-brand-ink' : 'border-brand-ink hover:bg-brand-ink hover:text-brand-lime'}`}>
+                          {n}
+                        </button>
                     )}
-
-                  <button
-                    onClick={() => setPage((p) => p + 1)}
-                    disabled={page === totalPages}
-                    className="px-3 py-1.5 text-xs font-bold border-2 border-brand-ink rounded-xl disabled:opacity-30 hover:bg-brand-ink hover:text-brand-lime transition-colors"
-                  >Next ›</button>
-                  <button
-                    onClick={() => setPage(totalPages)}
-                    disabled={page === totalPages}
-                    className="px-3 py-1.5 text-xs font-bold border-2 border-brand-ink rounded-xl disabled:opacity-30 hover:bg-brand-ink hover:text-brand-lime transition-colors"
-                  >»</button>
+                  <button onClick={() => setPage((p) => p + 1)} disabled={page === totalPages}
+                    className="px-3 py-1.5 text-xs font-bold border-2 border-brand-ink rounded-xl disabled:opacity-30 hover:bg-brand-ink hover:text-brand-lime transition-colors">Next ›</button>
+                  <button onClick={() => setPage(totalPages)} disabled={page === totalPages}
+                    className="px-3 py-1.5 text-xs font-bold border-2 border-brand-ink rounded-xl disabled:opacity-30 hover:bg-brand-ink hover:text-brand-lime transition-colors">»</button>
                 </div>
               </div>
             )}
@@ -378,20 +418,25 @@ export default function AdminProducts() {
         )}
       </div>
 
-      {/* ── Create / Edit Modal ───────────────────────────────────────────── */}
+      {/* ── Create / Edit Modal ── */}
       {modal !== null && (
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-brand-ink/60 backdrop-blur-sm p-4">
           <div className="bg-brand-cream border-2 border-brand-ink rounded-3xl w-full max-w-2xl my-8">
 
             <div className="flex items-center justify-between px-8 py-6 border-b-2 border-brand-ink">
-              <h2 className="font-display text-3xl text-brand-ink tracking-widest">
-                {isEdit ? 'EDIT PRODUCT' : 'ADD PRODUCT'}
-              </h2>
-              <button onClick={() => setModal(null)} className="text-brand-ink/40 hover:text-brand-ink text-2xl leading-none">✕</button>
+              <div className="flex items-center gap-3">
+                {isEdit ? <IconEdit /> : <IconPlus />}
+                <h2 className="font-display text-3xl text-brand-ink tracking-widest">
+                  {isEdit ? 'EDIT PRODUCT' : 'ADD PRODUCT'}
+                </h2>
+              </div>
+              <button onClick={() => setModal(null)}
+                className="w-9 h-9 flex items-center justify-center rounded-full border-2 border-brand-ink text-brand-ink/50 hover:bg-brand-ink hover:text-brand-lime transition-colors text-lg">
+                ✕
+              </button>
             </div>
 
             <form onSubmit={handleSubmit} className="px-8 py-6 flex flex-col gap-6">
-
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-bold tracking-widest uppercase text-brand-ink/60">Name *</label>
@@ -443,7 +488,7 @@ export default function AdminProducts() {
                   <label className="text-xs font-bold tracking-widest uppercase text-brand-ink/60">Image URLs *</label>
                   {form.imageUrls.map((url, i) => (
                     <div key={i} className="flex gap-2">
-                      <input value={url} onChange={(e) => setImageUrl(i, e.target.value)} placeholder="https://images.unsplash.com/..." className={inp} />
+                      <input value={url} onChange={(e) => setImageUrl(i, e.target.value)} placeholder="https://..." className={inp} />
                       {form.imageUrls.length > 1 && (
                         <button type="button" onClick={() => removeImage(i)} className="px-3 text-red-400 hover:text-red-600 font-bold flex-shrink-0">✕</button>
                       )}
@@ -460,8 +505,8 @@ export default function AdminProducts() {
                   </label>
                   {form.variants.map((v, i) => (
                     <div key={i} className="grid grid-cols-4 gap-2 items-center">
-                      <input value={v.size}       onChange={(e) => setVariant(i, 'size', e.target.value)}       placeholder="S / M / L" className={inp} />
-                      <input value={v.color}      onChange={(e) => setVariant(i, 'color', e.target.value)}      placeholder="Color"     className={inp} />
+                      <input value={v.size}  onChange={(e) => setVariant(i, 'size', e.target.value)}  placeholder="S / M / L" className={inp} />
+                      <input value={v.color} onChange={(e) => setVariant(i, 'color', e.target.value)} placeholder="Color"     className={inp} />
                       <input type="number" min="0" value={v.stock} onChange={(e) => setVariant(i, 'stock', e.target.value)} placeholder="Stock" className={inp} />
                       <div className="flex gap-2 items-center">
                         <input type="number" step="0.01" min="0" value={v.extraPrice} onChange={(e) => setVariant(i, 'extraPrice', e.target.value)} placeholder="+$" className={inp} />
@@ -493,7 +538,6 @@ export default function AdminProducts() {
                   {saving ? 'SAVING...' : isEdit ? 'SAVE CHANGES' : 'CREATE PRODUCT'}
                 </button>
               </div>
-
             </form>
           </div>
         </div>
